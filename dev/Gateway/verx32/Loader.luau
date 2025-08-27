@@ -425,11 +425,9 @@ local function applyCharacterSettings()
         end
     end
 end
--- Conecta ao respawn do player
+
 player.CharacterAdded:Connect(function(newCharacter)
-    -- Aguarda o humanoid carregar
     local humanoid = newCharacter:WaitForChild("Humanoid")
-    -- Aplica as configurações após um pequeno delay
     task.wait(0.1)
     applyCharacterSettings()
 end)
@@ -453,7 +451,7 @@ t4:CreateButton({
         Rayfield:Notify({
             Title = "Alert",
             Content = "You can no longer hack computers, but you can still escape.",
-            Duration = 3.5,
+            Duration = 2,
             Image = "rewind",
         })
         local character = getCurrentCharacter()
@@ -470,15 +468,15 @@ t4:CreateButton({
     Callback = function()
         _G.AutomaticHackingEnabled = not _G.AutomaticHackingEnabled
         Rayfield:Notify({
-            Title = "AntiPCError (FIXED)",
+            Title = "AntiPCError",
             Content = _G.AutomaticHackingEnabled and "Enabled." or "Disabled.",
-            Duration = 3.5,
+            Duration = 2,
             Image = 4483362458,
         })
         if _G.AutomaticHackingEnabled then
             spawn(function()
                 while _G.AutomaticHackingEnabled do
-                    wait(0.25)
+                    wait(0.05)
                     local args = {
                         "SetPlayerMinigameResult",
                         true
@@ -499,36 +497,43 @@ local character
 local hammer
 local HammerEvent
 local isBeast = false
+
 local function SetupHammer()
     character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     if isBeast and character then
-        hammer = character:WaitForChild("Hammer", 5) -- espera até 5s o Hammer aparecer
+        hammer = character:WaitForChild("Hammer", 5)
         if hammer then
             HammerEvent = hammer:WaitForChild("HammerEvent", 5)
+            print("Hammer and HammerEvent set up!")
         end
     end
 end
+
 local function TryAutoRope(victim)
     if not victim.Character then return end
     local victimStats = victim:FindFirstChild("TempPlayerStatsModule")
     if not victimStats then return end
     local ragdoll = victimStats:FindFirstChild("Ragdoll")
     local health = victimStats:FindFirstChild("Health")
+
     if ragdoll and ragdoll.Value == true and health and health.Value > 0 then
         local torso = victim.Character:FindFirstChild("Torso") or victim.Character:FindFirstChild("UpperTorso")
         local hrp = victim.Character:FindFirstChild("HumanoidRootPart")
         if torso and hrp and HammerEvent then
             HammerEvent:FireServer("HammerTieUp", torso, hrp.Position)
-            print("Using auto rope in:", victim.Name)
+            print("Used on:", victim.Name)
         end
     end
 end
+
+-- Auto Rope loop
 task.spawn(function()
     while true do
         if autoRopeEnabled and isBeast then
             if not character or not character.Parent then
                 SetupHammer()
             end
+
             local beastRoot = character and character:FindFirstChild("HumanoidRootPart")
             if beastRoot and HammerEvent then
                 for _, player in pairs(Players:GetPlayers()) do
@@ -544,6 +549,8 @@ task.spawn(function()
         task.wait(0.1)
     end
 end)
+
+-- Update beast status
 local function UpdateBeastStatus()
     local stats = LocalPlayer:FindFirstChild("TempPlayerStatsModule")
     if stats then
@@ -556,13 +563,17 @@ local function UpdateBeastStatus()
                 hammer = nil
                 HammerEvent = nil
             end
+
             beastVal:GetPropertyChangedSignal("Value"):Connect(function()
                 isBeast = beastVal.Value
                 if isBeast then
-                    -- espera o Character aparecer de novo ao virar besta
                     LocalPlayer.CharacterAdded:Wait()
-                    task.wait(0.5) -- pequena espera extra
+                    task.wait(0.5)
                     SetupHammer()
+
+                    if autoRopeEnabled then
+                        print("[Auto Rope] Reactivated when becoming Beast!")
+                    end
                 else
                     hammer = nil
                     HammerEvent = nil
@@ -571,16 +582,24 @@ local function UpdateBeastStatus()
         end
     end
 end
+
 UpdateBeastStatus()
+
+-- Toggle for Auto Rope
 t4:CreateToggle({
     Name = "Auto Rope",
     CurrentValue = false,
     Flag = "ToggleRope",
     Callback = function(Value)
         autoRopeEnabled = Value
+        if autoRopeEnabled and isBeast then
+            SetupHammer()
+            print("Enabled while beast")
+        end
     end,
 })
 
+--
 t4:CreateSection("Teleports")
 t4:CreateButton({
    Name = "TP To Map",
@@ -737,4 +756,5 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
