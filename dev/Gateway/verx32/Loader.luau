@@ -1,14 +1,4 @@
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/SiriusSoftwareLtd/Rayfield/main/source.lua'))()
-local function simulatedMD5(str)
-    local hex = ""
-    for i = 1, #str do
-        hex = hex .. string.format("%02x", string.byte(str, i))
-    end
-    return hex
-end
-local player = game.Players.LocalPlayer
-local content = "dirsblox token api: banida_off"
-local correctHash = simulatedMD5(content)
 local CurrentTheme = "Amethyst"
 if Rayfield and Rayfield.Flags and Rayfield.Flags["Theme"] then
     local savedTheme = Rayfield.Flags["Theme"].CurrentValue
@@ -374,7 +364,7 @@ local CurrentValueWS = 16
 local CurrentValueJP = 50
 local CurrentValueGR = 198.6
 local sectionWalkSpeed = t1:CreateSection("Walk speed")
-t1:CreateSlider({
+local ws = t1:CreateSlider({
     Name = "WalkSpeed",
     Range = {0, 50},
     Increment = 1,
@@ -389,7 +379,7 @@ t1:CreateSlider({
     end,
 })
 local sectionJumpPower = t1:CreateSection("Jump power")
-t1:CreateSlider({
+local jp = t1:CreateSlider({
     Name = "JumpPower",
     Range = {0, 100},
     Increment = 1,
@@ -404,7 +394,7 @@ t1:CreateSlider({
     end,
 })
 local sectionGravity = t1:CreateSection("World gravity")
-t1:CreateSlider({
+local tub = t1:CreateSlider({
     Name = "Gravity",
     Range = {0, 500},
     Increment = 10,
@@ -421,6 +411,7 @@ t1:CreateButton({
     Callback = function()
         CurrentValueGR = 198.6
         workspace.Gravity = CurrentValueGR
+        tub:Set(198.6) -- The new slider integer value
     end,
 })
 t1:CreateButton({
@@ -430,6 +421,7 @@ t1:CreateButton({
         if humanoid then
             CurrentValueWS = 16
             humanoid.WalkSpeed = CurrentValueWS
+            ws:Set(16) -- The new slider integer value
         end
     end,
 })
@@ -440,6 +432,7 @@ t1:CreateButton({
         if humanoid then
             CurrentValueJP = 50
             humanoid.JumpPower = CurrentValueJP
+            jp:Set(50) -- The new slider integer value
         end
     end,
 })
@@ -787,6 +780,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
