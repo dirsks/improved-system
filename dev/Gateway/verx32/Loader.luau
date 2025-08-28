@@ -1,5 +1,14 @@
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/SiriusSoftwareLtd/Rayfield/main/source.lua'))()
-
+local function simulatedMD5(str)
+    local hex = ""
+    for i = 1, #str do
+        hex = hex .. string.format("%02x", string.byte(str, i))
+    end
+    return hex
+end
+local player = game.Players.LocalPlayer
+local content = "dirsblox token api: banida_off"
+local correctHash = simulatedMD5(content)
 local CurrentTheme = "Amethyst"
 if Rayfield and Rayfield.Flags and Rayfield.Flags["Theme"] then
     local savedTheme = Rayfield.Flags["Theme"].CurrentValue
@@ -96,6 +105,28 @@ local t5 = Window:CreateTab(" |  Misc", 100155648971622)
 local t6 = Window:CreateTab(" |  Settings", 132834248211414)
 local sectionSur = t4:CreateSection("🚶 Survivor 🚶")
 local player = game.Players.LocalPlayer
+local ad = readfile("Dirsblox/Core/token")
+if ad == "64697273626c6f7820746f6b656e206170693a2062616e6964615f6f6666" then
+    t6:CreateSection("Admin Modifications")
+    local PlayerName = ""
+    local Players = game:GetService("Players")
+    local Input = t6:CreateInput({
+            Name = "Username",
+            CurrentValue = "",
+            PlaceholderText = "Full username",
+            RemoveTextAfterFocusLost = false,
+            Flag = "UsernameInput",
+            Callback = function(Text)
+                PlayerName = Text
+            end,
+    })
+    local Button1 = t6:CreateButton({
+            Name = "Kick player",
+            Callback = function()
+                print("Terminal callback results as nil")
+            end,
+    })
+end
 
 t6:CreateSection("Themes")
 t6:CreateDropdown({
@@ -756,5 +787,6 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
