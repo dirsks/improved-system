@@ -218,50 +218,6 @@ local function updatePlayerESP()
     end
 end
 -- Conecta evento para quando players spawnam
-game.Players.PlayerAdded:Connect(function(plr)
-    plr.CharacterAdded:Connect(updatePlayerESP)
-end)
-for _, plr in pairs(game.Players:GetPlayers()) do
-    if plr.CharacterAdded then
-        plr.CharacterAdded:Connect(updatePlayerESP)
-    end
-end
-t3:CreateToggle({
-    Name = "Esp PLAYERS",
-    CurrentValue = false,
-    Flag = "TogglePlayersESP",
-    Callback = function(Value)
-        _G.PlayersESPEnabled = Value
-        local playersList = game.Players:GetPlayers()
-        for _, plr in pairs(playersList) do
-            if plr ~= player and plr.Character then
-                local char = plr.Character
-                local highlight = char:FindFirstChild("Highlight")
-                if highlight and not Value then
-                    highlight:Destroy()
-                end
-                if Value and not highlight then
-                    local a = Instance.new("Highlight", char)
-                    a.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                    a.FillColor = Color3.fromRGB(0, 255, 0)
-                    a.OutlineColor = Color3.fromRGB(127, 255, 127)
-                    spawn(function()
-                        repeat
-                            wait(0.1)
-                            if plr == getBeast() then
-                                a.FillColor = Color3.fromRGB(255, 0, 0)
-                                a.OutlineColor = Color3.fromRGB(255, 127, 127)
-                            else
-                                a.FillColor = Color3.fromRGB(0, 255, 0)
-                                a.OutlineColor = Color3.fromRGB(127, 255, 127)
-                            end
-                        until not char or not a or not a.Parent
-                    end)
-                end
-            end
-        end
-    end
-})
 -- apply and remove Esp
 local function applyESP(objectName, fillColor, outlineColor)
     for _, obj in pairs(workspace:GetDescendants()) do
@@ -282,15 +238,65 @@ local function removeESP(objectName)
         end
     end
 end
--- Toggles
+game.Players.PlayerAdded:Connect(function(plr)
+    plr.CharacterAdded:Connect(updatePlayerESP)
+end)
+for _, plr in pairs(game.Players:GetPlayers()) do
+    if plr.CharacterAdded then
+        plr.CharacterAdded:Connect(updatePlayerESP)
+    end
+end
+-- ================= ESP Ajustado =================
+
+-- ESP Players
+t3:CreateToggle({
+    Name = "Esp PLAYERS",
+    CurrentValue = false,
+    Flag = "TogglePlayersESP",
+    Callback = function(Value)
+        _G.PlayersESPEnabled = Value
+        local playersList = game.Players:GetPlayers()
+        for _, plr in pairs(playersList) do
+            if plr ~= player and plr.Character then
+                local char = plr.Character
+                local highlight = char:FindFirstChild("Highlight")
+                if highlight and not Value then
+                    highlight:Destroy()
+                end
+                if Value and not highlight then
+                    local a = Instance.new("Highlight", char)
+                    a.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                    a.FillColor = Color3.fromRGB(0, 255, 0)
+                    a.OutlineColor = Color3.fromRGB(127, 255, 127)
+                    task.spawn(function()
+                        while _G.PlayersESPEnabled and char and a and a.Parent do
+                            task.wait(0.1)
+                            if plr == getBeast() then
+                                a.FillColor = Color3.fromRGB(255, 0, 0)
+                                a.OutlineColor = Color3.fromRGB(255, 127, 127)
+                            else
+                                a.FillColor = Color3.fromRGB(0, 255, 0)
+                                a.OutlineColor = Color3.fromRGB(127, 255, 127)
+                            end
+                        end
+                        if a then a:Destroy() end
+                    end)
+                end
+            end
+        end
+    end
+})
+
+-- ESP Pods
 t3:CreateToggle({
     Name = "ESP Pod",
     CurrentValue = false,
     Flag = "TogglePodsESP",
     Callback = function(Value)
+        _G.ESP_PODS = Value
         if Value then
             task.spawn(function()
-                while Value do
+                while _G.ESP_PODS do
                     if game.ReplicatedStorage.CurrentMap.Value then
                         applyESP("FreezePod", Color3.fromRGB(0,255,255), Color3.fromRGB(127,255,255))
                     else
@@ -305,14 +311,17 @@ t3:CreateToggle({
         end
     end,
 })
+
+-- ESP Exit Doors
 t3:CreateToggle({
     Name = "ESP Exit Doors",
     CurrentValue = false,
     Flag = "ToggleExitDoorsESP",
     Callback = function(Value)
+        _G.ESP_EXITS = Value
         if Value then
             task.spawn(function()
-                while Value do
+                while _G.ESP_EXITS do
                     if game.ReplicatedStorage.CurrentMap.Value then
                         applyESP("ExitDoor", Color3.fromRGB(255,255,0), Color3.fromRGB(255,127,127))
                     else
@@ -327,14 +336,17 @@ t3:CreateToggle({
         end
     end,
 })
+
+-- ESP PCs
 t3:CreateToggle({
     Name = "ESP PCs",
     CurrentValue = false,
     Flag = "TogglePCsESP",
     Callback = function(Value)
+        _G.ESP_PCS = Value
         if Value then
             task.spawn(function()
-                while Value do
+                while _G.ESP_PCS do
                     if game.ReplicatedStorage.CurrentMap.Value then
                         applyESP("ComputerTable", Color3.fromRGB(0,0,255), Color3.fromRGB(127,127,255))
                     else
@@ -349,6 +361,7 @@ t3:CreateToggle({
         end
     end,
 })
+
 -- Basic Hacks buttons
 local noclip = false
 local sectionNoclip = t1:CreateSection("Noclip/Inf jump")
@@ -522,7 +535,7 @@ t4:CreateButton({
         _G.AutomaticHackingEnabled = not _G.AutomaticHackingEnabled
         Rayfield:Notify({
             Title = "AntiPCError",
-            Content = _G.AutomaticHackingEnabled and "Enabled." or "Disabled.",
+            Content = _G.AutomaticHackingEnabled and "🟩 ENABLED" or "🟥 DISABLED",
             Duration = 2,
             Image = 4483362458,
         })
@@ -882,6 +895,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
