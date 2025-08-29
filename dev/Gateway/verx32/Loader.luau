@@ -34,7 +34,7 @@ end
 loadstring(game:HttpGet("https://raw.githubusercontent.com/dirsks/dirsblox/refs/heads/main/recovery/static/crsd1/md5.luau"))()
 local y = game.Players.LocalPlayer
 local x = game.Players.LocalPlayer.Name
-local icon = getcustomasset("Dirsblox/Core/Assets/Icons/logo.png")
+local icon = 126271437555657
 task.wait(1)
 print("Loaded: " .. script.Name .. " succeful. 💎 Join Dodo Hub to support us!💎")
 print("gateway ID: " .. game.PlaceVersion)
@@ -884,6 +884,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
