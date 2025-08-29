@@ -1,5 +1,5 @@
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/SiriusSoftwareLtd/Rayfield/main/source.lua'))()
-local CurrentTheme = "Amethyst"
+local CurrentTheme = "Bloom"
 if Rayfield and Rayfield.Flags and Rayfield.Flags["Theme"] then
     local savedTheme = Rayfield.Flags["Theme"].CurrentValue
     if typeof(savedTheme) == "table" and savedTheme[1] then
@@ -879,6 +879,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
