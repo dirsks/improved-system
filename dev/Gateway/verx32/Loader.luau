@@ -594,6 +594,35 @@ t4:CreateButton({
         end
     end,
 })
+t4:CreateSection("Troll (In Research)")
+-- Slow beast
+t4:CreateToggle({
+    Name = "Slow beast",
+    CurrentValue = false,
+    Flag = "ToggleSlowBeast",
+    Callback = function(Value)
+        _G.SlowBeastEnabled = Value
+        if Value then
+            task.spawn(function()
+                while _G.SlowBeastEnabled do
+                    for _, plr in pairs(game.Players:GetChildren()) do
+                        if plr.Character and plr == getBeast() then
+                            local stats = plr:FindFirstChild("TempPlayerStatsModule")
+                            if stats and plr.Character:FindFirstChild("BeastPowers") then
+                                local powers = plr.Character.BeastPowers
+                                if powers:FindFirstChild("PowersEvent") then
+                                    powers.PowersEvent:FireServer("Jumped")
+                                end
+                            end
+                        end
+                    end
+                    task.wait() -- 0 segundos (apenas cede a thread)
+                end
+            end)
+        end
+    end,
+})
+
 t4:CreateSection("🔴 Beast 🔴")
 -- auto rope
 local Players = game:GetService("Players")
@@ -936,6 +965,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
