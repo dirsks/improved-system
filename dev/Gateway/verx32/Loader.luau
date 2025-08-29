@@ -787,16 +787,15 @@ t5:CreateButton({
 t5:CreateButton({
     Name = ">Get Inf. Credits",
     Callback = function()
-            local g = game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.PlayerNamesFrame
             y.SavedPlayerStatsModule:WaitForChild("Credits").Value = math.huge
-            g:WaitForChild(y.Name.."PlayerFrame").Text = y.SavedPlayerStatsModule.Level.Value
     end,
 })
 t5:CreateButton({
     Name = ">Get Level (WIP)",
     Callback = function()
+            local g = game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.PlayerNamesFrame
             y.SavedPlayerStatsModule:WaitForChild("Level").Value = 1000
-            
+            g:WaitForChild(y.Name.."PlayerFrame").Text = y.SavedPlayerStatsModule.Level.Value
     end,
 })
 
@@ -883,6 +882,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
