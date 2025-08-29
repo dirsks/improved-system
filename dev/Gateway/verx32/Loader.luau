@@ -34,14 +34,13 @@ end
 loadstring(game:HttpGet("https://raw.githubusercontent.com/dirsks/dirsblox/refs/heads/main/recovery/static/crsd1/md5.luau"))()
 local y = game.Players.LocalPlayer
 local x = game.Players.LocalPlayer.Name
-local icon = 126271437555657
 task.wait(1)
 print("Loaded: " .. script.Name .. " succeful. 💎 Join Dodo Hub to support us!💎")
 print("gateway ID: " .. game.PlaceVersion)
 
 local Window = Rayfield:CreateWindow({
    Name = "Dodo Hub ❄️ ["..info.Name.."]",
-   Icon = icon,
+   Icon = 126271437555657,
    LoadingTitle = ">Loading...",
    LoadingSubtitle = GetRandomTip(),
    ShowText = "Dodo Hub",
@@ -884,6 +883,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
