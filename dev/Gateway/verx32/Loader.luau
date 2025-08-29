@@ -583,12 +583,12 @@ t4:CreateButton({
         if _G.AutomaticHackingEnabled then
             spawn(function()
                 while _G.AutomaticHackingEnabled do
-                    wait(0.05)
                     local args = {
                         "SetPlayerMinigameResult",
                         true
                     }
                     game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+                    task.wait()
                 end
             end)
         end
@@ -617,6 +617,32 @@ t4:CreateToggle({
                         end
                     end
                     task.wait() -- 0 segundos (apenas cede a thread)
+                end
+            end)
+        end
+    end,
+})
+-- remove rope
+t4:CreateToggle({
+    Name = "Auto Remove Rope",
+    CurrentValue = false,
+    Flag = "ToggleHammerClick",
+    Callback = function(Value)
+        _G.HammerClickEnabled = Value
+        if Value then
+            task.spawn(function()
+                while _G.HammerClickEnabled do
+                    local beast = getBeast()
+                    if beast and beast.Character then
+                        local hammer = beast.Character:FindFirstChild("Hammer")
+                        if hammer then
+                            local hammerEvent = hammer:FindFirstChild("HammerEvent")
+                            if hammerEvent then
+                                hammerEvent:FireServer("HammerClick", true)
+                            end
+                        end
+                    end
+                    task.wait()
                 end
             end)
         end
@@ -965,6 +991,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
