@@ -34,12 +34,46 @@ end
 loadstring(game:HttpGet("https://raw.githubusercontent.com/dirsks/dirsblox/refs/heads/main/recovery/static/crsd1/md5.luau"))()
 local y = game.Players.LocalPlayer
 local x = game.Players.LocalPlayer.Name
+local date = os.date("*t")
+local month, day = date.month, date.day
+
+local function GetEventEmoji()
+    -- New Year 🎆 (January 1st to 4th)
+    if month == 1 and (day == 1 or day == 2 or day == 3 or day == 4) then
+        return "🎆"
+    end
+
+    -- Easter 🥚 (example April 20th to 24th, adjust every year)
+    if month == 4 and (day == 20 or day == 21 or day == 23 or day == 24) then
+        return "🥚"
+    end
+
+    -- Halloween 🎃 (October 31st to November 3rd)
+    if (month == 10 and day == 31) or (month == 11 and (day == 1 or day == 2 or day == 3)) then
+        return "🎃"
+    end
+
+    -- Christmas ❄️ (December 25th to 29th)
+    if month == 12 and (day == 25 or day == 26 or day == 27 or day == 28 or day == 29) then
+        return "❄️"
+    end
+
+    -- Birthday 🎂 (August 31th to September 4th)
+    if (month == 8 and (day == 31 or day == 31)) or (month == 9 and (day == 1 or day == 2 or day == 3 or day == 4)) then
+        return "🎂"
+    end
+
+    -- Sem evento → padrão
+    return "🔹"
+end
+
+local eventEmoji = GetEventEmoji()
 task.wait(1)
 print("Loaded: " .. script.Name .. " succeful. 💎 Join Dodo Hub to support us!💎")
 print("gateway ID: " .. game.PlaceVersion)
 
 local Window = Rayfield:CreateWindow({
-   Name = "Dodo Hub ❄️ ["..info.Name.."]",
+   Name = "Dodo Hub "..eventEmoji.." ["..info.Name.."]",
    Icon = 126271437555657,
    LoadingTitle = ">Loading...",
    LoadingSubtitle = GetRandomTip(),
@@ -69,6 +103,7 @@ local Window = Rayfield:CreateWindow({
       Key = {"Hello"}
    }
 })
+
 -- booting
 if not isfile("Dirsblox/Core/token") then
     error([[Unable to execute file: Workspace/Dirsblox/Core/Modules/Warnings.lua]])
@@ -895,6 +930,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
