@@ -1,3 +1,9 @@
+if _G.DH_LOADED and not _G.DH_DEBUG then
+    warn("Script is already running")
+    return
+end
+_G.DH_LOADED = true
+
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/SiriusSoftwareLtd/Rayfield/main/source.lua'))()
 local CurrentTheme = "DarkBlue"
 if Rayfield and Rayfield.Flags and Rayfield.Flags["Theme"] then
@@ -6,11 +12,9 @@ if Rayfield and Rayfield.Flags and Rayfield.Flags["Theme"] then
         CurrentTheme = savedTheme[1]
     end
 end
-if _G.DH_LOADED and not _G.DH_DEBUG then
-    error([[attempt to call a nil value]])
-    return
-end
-_G.DH_LOADED = true
+local MarketplaceService = game:GetService("MarketplaceService")
+local info = MarketplaceService:GetProductInfo(game.PlaceId)
+
 local tips = {
     "Bug? https://discord.gg/zhDuFPRP",
     "Welcome!",
@@ -30,16 +34,17 @@ end
 loadstring(game:HttpGet("https://raw.githubusercontent.com/dirsks/dirsblox/refs/heads/main/recovery/static/crsd1/md5.luau"))()
 local y = game.Players.LocalPlayer
 local x = game.Players.LocalPlayer.Name
+local icon = getcustomasset("Dirsblox/Core/Assets/Icons/logo.png")
 task.wait(1)
 print("Loaded: " .. script.Name .. " succeful. 💎 Join Dodo Hub to support us!💎")
 print("gateway ID: " .. game.PlaceVersion)
 
 local Window = Rayfield:CreateWindow({
-   Name = "DIRSBLOX FTF v1.5.3",
-   Icon = 139558959655679,
+   Name = "Dodo Hub ❄️ ["..info.Name.."]",
+   Icon = icon,
    LoadingTitle = ">Loading...",
    LoadingSubtitle = GetRandomTip(),
-   ShowText = "Dodo Hub ❄️ ["..game.Name.."]",
+   ShowText = "Dodo Hub",
    Theme = CurrentTheme,
    ToggleUIKeybind = "V",
    DisableRayfieldPrompts = true,
@@ -879,6 +884,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
