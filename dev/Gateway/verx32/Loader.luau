@@ -127,6 +127,7 @@ if isfile(path) then
 else
     warn("[DSBCore] File not found: " .. path)
 end
+local fav = true
 local t1 = Window:CreateTab(" |  Basic Hacks", 113473998935078)
 local t3 = Window:CreateTab(" |  ESP", 130937742838884)
 local t4 = Window:CreateTab(" |  Exploit", 119319133251626)
@@ -202,6 +203,23 @@ t6:CreateDropdown({
             Rayfield:SetTheme(chosenTheme)
             CurrentTheme = chosenTheme
         end
+   end,
+})
+t6:CreateSection("Notifications")
+t6:CreateToggle({
+   Name = "Enable Server Notifications",
+   CurrentValue = true,
+   Flag = "ToggleNotificationSetting", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+        fav = Value
+   end,
+})
+t1:CreateToggle({
+   Name = "Enable Rayfield Notifications",
+   CurrentValue = false,
+   Flag = "ToggleNotificationSetting", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+        print("Rayfield notifications are turned off")
    end,
 })
 -- ===== FUNÇÕES PARA OBTER CHARACTER/HUMANOID ATUAL =====
@@ -402,7 +420,7 @@ t3:CreateToggle({
         end
     end,
 })]]
--- ESP PCs com cores dinâmicas
+-- ESP PCs com cores dinâmicas e ajuste especial para azul
 t3:CreateToggle({
     Name = "ESP PCs",
     CurrentValue = false,
@@ -423,14 +441,23 @@ t3:CreateToggle({
                                         highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
                                     end
                                     
-                                    -- cor da tela do pc
+                                    -- Detecta cor da tela
                                     local screenColor = screen.Color
-                                    highlight.FillColor = screenColor
-                                    highlight.OutlineColor = Color3.new(
-                                        math.clamp(screenColor.R + 0.3, 0, 1),
-                                        math.clamp(screenColor.G + 0.3, 0, 1),
-                                        math.clamp(screenColor.B + 0.3, 0, 1)
-                                    )
+                                    local r,g,b = math.floor(screenColor.R*255), math.floor(screenColor.G*255), math.floor(screenColor.B*255)
+
+                                    if r==13 and g==105 and b==172 then
+                                        -- azul → aplicar cores customizadas
+                                        highlight.FillColor = Color3.fromRGB(85,170,255)
+                                        highlight.OutlineColor = Color3.fromRGB(66,132,197)
+                                    else
+                                        -- padrão → segue cor da tela
+                                        highlight.FillColor = screenColor
+                                        highlight.OutlineColor = Color3.new(
+                                            math.clamp(screenColor.R + 0.3, 0, 1),
+                                            math.clamp(screenColor.G + 0.3, 0, 1),
+                                            math.clamp(screenColor.B + 0.3, 0, 1)
+                                        )
+                                    end
                                 end
                             end
                         end
@@ -638,6 +665,28 @@ t4:CreateButton({
         end
     end,
 })
+t4:CreateToggle({
+    Name = "Auto Interact",
+    CurrentValue = false,
+    Flag = "ToggleInputAction",
+    Callback = function(Value)
+        _G.InputActionEnabled = Value
+        if Value then
+            task.spawn(function()
+                while _G.InputActionEnabled do
+                    local args = {
+                        "Input",
+                        "Action",
+                        true
+                    }
+                    game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+                    task.wait()
+                end
+            end)
+        end
+    end,
+})
+
 t4:CreateSection("Troll (In Research)")
 -- Slow beast
 t4:CreateToggle({
@@ -1022,7 +1071,18 @@ if ad ~= "64697273626c6f7820746f6b656e206170693a2062616e6964615f6f6666" then
     end)
 end
 
-setclipboard("https://discord.gg/zhDuFPRP")
+while task.wait(35) do
+    if fav == true then
+        Rayfield:Notify({
+            Title = "Dodo Research Club",
+            Content = "Join https://discord.gg/vmQVgF9N now!",
+            Duration = 3,
+            Image = "rewind",
+        })
+    end
+end
+
+setclipboard("https://discord.gg/vmQVgF9N")
 Rayfield:LoadConfiguration()
 --[[
 t5:CreateSection("Testing")
@@ -1035,6 +1095,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
