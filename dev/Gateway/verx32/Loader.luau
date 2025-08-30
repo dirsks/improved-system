@@ -378,7 +378,7 @@ t3:CreateToggle({
     end,
 })
 
--- ESP PCs
+--[[ ESP PCs
 t3:CreateToggle({
     Name = "ESP PCs",
     CurrentValue = false,
@@ -394,6 +394,50 @@ t3:CreateToggle({
                         removeESP("ComputerTable")
                     end
                     task.wait(1)
+                end
+                removeESP("ComputerTable")
+            end)
+        else
+            removeESP("ComputerTable")
+        end
+    end,
+})]]
+-- ESP PCs com cores dinâmicas
+t3:CreateToggle({
+    Name = "ESP PCs",
+    CurrentValue = false,
+    Flag = "TogglePCsESP",
+    Callback = function(Value)
+        _G.ESP_PCS = Value
+        if Value then
+            task.spawn(function()
+                while _G.ESP_PCS do
+                    if game.ReplicatedStorage.CurrentMap.Value then
+                        for _, obj in pairs(workspace:GetDescendants()) do
+                            if obj.Name == "ComputerTable" and obj:IsA("Model") then
+                                local screen = obj:FindFirstChild("Screen")
+                                if screen and screen:IsA("BasePart") then
+                                    local highlight = obj:FindFirstChild("Highlight")
+                                    if not highlight then
+                                        highlight = Instance.new("Highlight", obj)
+                                        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                                    end
+                                    
+                                    -- cor da tela do pc
+                                    local screenColor = screen.Color
+                                    highlight.FillColor = screenColor
+                                    highlight.OutlineColor = Color3.new(
+                                        math.clamp(screenColor.R + 0.3, 0, 1),
+                                        math.clamp(screenColor.G + 0.3, 0, 1),
+                                        math.clamp(screenColor.B + 0.3, 0, 1)
+                                    )
+                                end
+                            end
+                        end
+                    else
+                        removeESP("ComputerTable")
+                    end
+                    task.wait(0.2)
                 end
                 removeESP("ComputerTable")
             end)
@@ -991,6 +1035,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
