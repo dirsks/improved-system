@@ -16,9 +16,11 @@ local MarketplaceService = game:GetService("MarketplaceService")
 local info = MarketplaceService:GetProductInfo(game.PlaceId)
 
 local tips = {
-    "Bug? https://discord.gg/zhDuFPRP",
-    "Welcome!",
-    "Join our DSCRD!"
+    "Daffy734 im ur fan",
+    "Daffy734 is him",
+    "Respect for Daffy734",
+    "Mad respect for Daffy734",
+    "Daffy734 deserves all our respect"
 }
 local function GetRandomTip()
     local index = math.random(1, #tips)
@@ -188,7 +190,8 @@ if ad == "64697273626c6f7820746f6b656e206170693a2062616e6964615f6f6666" then
             end,
     })
 end
-
+local Label = t1:CreateLabel("NOTE", 4483362458, Color3.fromRGB(255, 255, 255), false)
+local Divider = t1:CreateDivider()
 t6:CreateSection("Themes")
 t6:CreateDropdown({
    Name = "Choose a custom Theme",
@@ -214,10 +217,10 @@ t6:CreateToggle({
         fav = Value
    end,
 })
-t1:CreateToggle({
+t6:CreateToggle({
    Name = "Enable Rayfield Notifications",
    CurrentValue = false,
-   Flag = "ToggleNotificationSetting", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Flag = "ToggleRfldNotifications", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
    Callback = function(Value)
         print("Rayfield notifications are turned off")
    end,
@@ -1157,6 +1160,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
