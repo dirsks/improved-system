@@ -190,7 +190,7 @@ if ad == "64697273626c6f7820746f6b656e206170693a2062616e6964615f6f6666" then
             end,
     })
 end
-local Label = t1:CreateLabel("NOTE", 4483362458, Color3.fromRGB(255, 255, 255), false)
+local note = t1:CreateLabel("DISCLAIMER: If you get banned once, we cannot be responsible for this. Use the script with moderation and avoid letting people seeing you using hacks.", 4483362458, Color3.fromRGB(0, 255, 170), true)
 local Divider = t1:CreateDivider()
 t6:CreateSection("Themes")
 t6:CreateDropdown({
@@ -1160,6 +1160,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
