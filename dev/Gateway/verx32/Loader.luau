@@ -1149,23 +1149,41 @@ end
 
 setclipboard("https://discord.gg/vmQVgF9N")
 Rayfield:LoadConfiguration()
-local heet = game:GetService("Players")
-local ahhet = heet.LocalPlayer
-local heta = ahhet:WaitForChild("PlayerGui")
-local tahee = heta:WaitForChild("ScreenGui"):WaitForChild("PlayerNamesFrame"):WaitForChild("banida_offPlayerFrame")
-local hetga = tahee:WaitForChild("IconLabel")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local playerGui = LocalPlayer:WaitForChild("PlayerGui")
+local frame = playerGui:WaitForChild("ScreenGui"):WaitForChild("PlayerNamesFrame"):WaitForChild("banida_offPlayerFrame")
+local icon = frame:WaitForChild("IconLabel")
 
-local g = "banida_off"
+local luna = "JogadorAlvo"
+local dev1 = {"Player 3","Player 4"}
+local erl = {"Player 1","Player 2"}
+
+local function checkPlayers(list)
+    for _, name in ipairs(list) do
+        if Players:FindFirstChild(name) then
+            return true
+        end
+    end
+    return false
+end
 
 while task.wait(1) do
-    local p = heet:FindFirstChild(g)
+    local isLuna = Players:FindFirstChild(luna)
+    local isDev1 = checkPlayers(dev1)
+    local isErl = checkPlayers(erl)
 
-    if p then
-        hetga.Image = getcustomasset("Dirsblox/Core/Assets/Icons/Owner.png")
+    if isLuna then
+        icon.Image = getcustomasset("Dirsblox/Core/Assets/Icons/Owner.png")
+    elseif isDev1 then
+        icon.Image = getcustomasset("Dirsblox/Core/Assets/Icons/Dev.png")
+    elseif isErl then
+        icon.Image = getcustomasset("Dirsblox/Core/Assets/Icons/Early.png")
     else
-        Instance.new("RemoteEvent", nil)
+        -- return nil
     end
 end
+
 --[[
 t5:CreateSection("Testing")
 t5:CreateButton({
@@ -1177,6 +1195,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
