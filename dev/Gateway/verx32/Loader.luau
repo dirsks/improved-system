@@ -695,6 +695,7 @@ t4:CreateToggle({
 
 t4:CreateSection("Troll (Good for incriminating)")
 -- give hit
+local plyers = game:GetService("Players")
 local forceBeastHitEnabled = false
 local FORCE_HIT_DISTANCE = 16
 
@@ -705,7 +706,7 @@ local function getClosestVictimToBeast(maxDist)
     local beastPos = beast.Character.HumanoidRootPart.Position
     local closest, closestDist
 
-    for _, plr in pairs(Players:GetPlayers()) do
+    for _, plr in pairs(plyers:GetPlayers()) do
         if plr ~= beast and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
             local dist = (plr.Character.HumanoidRootPart.Position - beastPos).Magnitude
             if dist <= maxDist and (not closestDist or dist < closestDist) then
@@ -1144,6 +1145,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
