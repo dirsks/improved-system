@@ -693,8 +693,67 @@ t4:CreateToggle({
     end,
 })
 
-t4:CreateSection("Troll (In Research)")
--- Slow beast
+t4:CreateSection("Troll (Good for incriminating)")
+-- give hit
+local forceBeastHitEnabled = false
+local FORCE_HIT_DISTANCE = 16
+
+local function getClosestVictimToBeast(maxDist)
+    local beast = getBeast()
+    if not beast or not beast.Character or not beast.Character:FindFirstChild("HumanoidRootPart") then return nil end
+
+    local beastPos = beast.Character.HumanoidRootPart.Position
+    local closest, closestDist
+
+    for _, plr in pairs(Players:GetPlayers()) do
+        if plr ~= beast and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+            local dist = (plr.Character.HumanoidRootPart.Position - beastPos).Magnitude
+            if dist <= maxDist and (not closestDist or dist < closestDist) then
+                closest = plr
+                closestDist = dist
+            end
+        end
+    end
+
+    return closest
+end
+
+task.spawn(function()
+    while true do
+        if forceBeastHitEnabled then
+            local beast = getBeast()
+            if beast and beast.Character then
+                local hammer = beast.Character:FindFirstChild("Hammer")
+                local hammerEvent = hammer and hammer:FindFirstChild("HammerEvent")
+                local victim = getClosestVictimToBeast(FORCE_HIT_DISTANCE)
+
+                if hammerEvent and victim and victim.Character then
+                    local torso = victim.Character:FindFirstChild("Torso") or victim.Character:FindFirstChild("UpperTorso")
+                    if torso then
+                        hammerEvent:FireServer("HammerHit", torso)
+                        print("Beast hit used on "..victim.Name)
+                    end
+                end
+            end
+        end
+        task.wait(0.1)
+    end
+end)
+
+t4:CreateToggle({
+    Name = "Give Beast Hit",
+    CurrentValue = false,
+    Flag = "ToggleForceBeastHitAura",
+    Callback = function(Value)
+        forceBeastHitEnabled = Value
+        if forceBeastHitEnabled then
+            print("[SYSTEM] Activated (range "..FORCE_HIT_DISTANCE.." studs)")
+        else
+            -- luna is so gyatt
+        end
+    end,
+})
+--slowmo best
 t4:CreateToggle({
     Name = "Slow beast",
     CurrentValue = false,
@@ -883,66 +942,6 @@ task.spawn(function()
         task.wait(0.1)
     end
 end)
--- force beast hit
-local forceBeastHitEnabled = false
-local FORCE_HIT_DISTANCE = 16
-
-local function getClosestVictimToBeast(maxDist)
-    local beast = getBeast()
-    if not beast or not beast.Character or not beast.Character:FindFirstChild("HumanoidRootPart") then return nil end
-
-    local beastPos = beast.Character.HumanoidRootPart.Position
-    local closest, closestDist
-
-    for _, plr in pairs(Players:GetPlayers()) do
-        if plr ~= beast and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
-            local dist = (plr.Character.HumanoidRootPart.Position - beastPos).Magnitude
-            if dist <= maxDist and (not closestDist or dist < closestDist) then
-                closest = plr
-                closestDist = dist
-            end
-        end
-    end
-
-    return closest
-end
-
-task.spawn(function()
-    while true do
-        if forceBeastHitEnabled then
-            local beast = getBeast()
-            if beast and beast.Character then
-                local hammer = beast.Character:FindFirstChild("Hammer")
-                local hammerEvent = hammer and hammer:FindFirstChild("HammerEvent")
-                local victim = getClosestVictimToBeast(FORCE_HIT_DISTANCE)
-
-                if hammerEvent and victim and victim.Character then
-                    local torso = victim.Character:FindFirstChild("Torso") or victim.Character:FindFirstChild("UpperTorso")
-                    if torso then
-                        hammerEvent:FireServer("HammerHit", torso)
-                        print("Beast hit used on "..victim.Name)
-                    end
-                end
-            end
-        end
-        task.wait(0.1)
-    end
-end)
-
-t4:CreateToggle({
-    Name = "Give Beast Hit",
-    CurrentValue = false,
-    Flag = "ToggleForceBeastHitAura",
-    Callback = function(Value)
-        forceBeastHitEnabled = Value
-        if forceBeastHitEnabled then
-            print("[SYSTEM] Activated (range "..FORCE_HIT_DISTANCE.." studs)")
-        else
-            -- luna is so gyatt
-        end
-    end,
-})
-
 
 t4:CreateToggle({
     Name = "Hit Aura",
@@ -1145,6 +1144,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
