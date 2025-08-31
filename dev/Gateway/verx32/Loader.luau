@@ -1,3 +1,4 @@
+-- simon you only change this for debug motherfucker
 if _G.DH_LOADED and not _G.DH_DEBUG then
     warn("Script is already running")
     return
@@ -60,12 +61,17 @@ local function GetEventEmoji()
         return "❄️"
     end
 
+    -- April Fools (April 1st to 5th)
+    if month == 4 and (day == 1 or day == 2 or day == 3 or day == 4 or day == 5) then
+        return "🤡"
+    end
+
     -- Birthday 🎂 (August 31th to September 4th)
     if (month == 8 and (day == 31 or day == 31)) or (month == 9 and (day == 1 or day == 2 or day == 3 or day == 4)) then
         return "🎂"
     end
 
-    -- Sem evento → padrão
+    -- default
     return "🔹"
 end
 
@@ -107,10 +113,10 @@ local Window = Rayfield:CreateWindow({
 })
 
 -- booting
-if not isfile("Dirsblox/Core/token") then
-    error([[Unable to execute file: Workspace/Dirsblox/Core/Modules/Warnings.lua]])
-    error([[Unable to execute file: Workspace/Dirsblox/Core/Modules/Versions.lua]])
-    error([[FATAL_ERR: Can't find "Core"]])
+--[[if not isfile("Dirsblox/Core/token") then
+    error([[Unable to execute file: Workspace/Dirsblox/Core/Modules/Warnings.lua)
+    error([[Unable to execute file: Workspace/Dirsblox/Core/Modules/Versions.lua)
+    error([[FATAL_ERR: Can't find "Core")
     error("FATAL_ERR: Core&verx" .. math.random(10, 99) .. "@DIRSBLOX")
     task.wait(2)
     error("FATAL_ERR: Core&verx" .. math.random(10, 99) .. "@DIRSBLOX")
@@ -122,7 +128,7 @@ if not isfile("Dirsblox/Core/token") then
     error("FATAL_ERR: Core&verx" .. math.random(10, 99) .. "@DIRSBLOX")
     warn("Stack overflow")
     return
-end
+end]]
 local path = "Dirsblox/Core/System/Modules/WarnUserDiscordModule.lua"
 if isfile(path) then
     loadstring(readfile(path))()
@@ -189,6 +195,7 @@ if ad == "64697273626c6f7820746f6b656e206170693a2062616e6964615f6f6666" then
                 sendCommand("Freeze", PlayerName)
             end,
     })
+    -- this dont work
 end
 local note = t1:CreateLabel("DISCLAIMER: If you get banned once, we cannot be responsible for this. Use the script with moderation and avoid letting people seeing you using hacks.", 4483362458, Color3.fromRGB(60, 110, 150), false)
 local Divider = t1:CreateDivider()
@@ -225,7 +232,7 @@ t6:CreateToggle({
         print("Rayfield notifications are turned off")
    end,
 })
--- ===== FUNÇÕES PARA OBTER CHARACTER/HUMANOID ATUAL =====
+
 local function getCurrentCharacter()
     return player.Character
 end
@@ -238,7 +245,7 @@ local function getCurrentRootPart()
     return character and character:FindFirstChild("HumanoidRootPart")
 end
 -- ESP Toggles
-local function getBeast()
+local function getBeast() -- a important function (changing this mean your death)
     for _, plr in pairs(game.Players:GetPlayers()) do
         if plr and plr:FindFirstChild("TempPlayerStatsModule") then
             local stat = plr.TempPlayerStatsModule:FindFirstChild("IsBeast")
@@ -249,7 +256,7 @@ local function getBeast()
     end
     return nil
 end
--- Função para atualizar ESP de jogadores quando alguém spawna
+
 local function updatePlayerESP()
     if not _G.PlayersESPEnabled then return end
     
@@ -279,7 +286,7 @@ local function updatePlayerESP()
         end
     end
 end
--- Conecta evento para quando players spawnam
+-- do not change this bc it fucks the code
 -- apply and remove Esp
 local function applyESP(objectName, fillColor, outlineColor)
     for _, obj in pairs(workspace:GetDescendants()) do
@@ -308,7 +315,7 @@ for _, plr in pairs(game.Players:GetPlayers()) do
         plr.CharacterAdded:Connect(updatePlayerESP)
     end
 end
--- ================= ESP Ajustado =================
+-- ================= ESP Fixed =================
 
 -- ESP Players
 t3:CreateToggle({
@@ -423,7 +430,7 @@ t3:CreateToggle({
         end
     end,
 })]]
--- ESP PCs com cores dinâmicas e ajuste especial para azul
+-- ESP PCs
 t3:CreateToggle({
     Name = "ESP PCs",
     CurrentValue = false,
@@ -444,16 +451,13 @@ t3:CreateToggle({
                                         highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
                                     end
                                     
-                                    -- Detecta cor da tela
                                     local screenColor = screen.Color
                                     local r,g,b = math.floor(screenColor.R*255), math.floor(screenColor.G*255), math.floor(screenColor.B*255)
 
                                     if r==13 and g==105 and b==172 then
-                                        -- azul → aplicar cores customizadas
                                         highlight.FillColor = Color3.fromRGB(85,170,255)
                                         highlight.OutlineColor = Color3.fromRGB(66,132,197)
                                     else
-                                        -- padrão → segue cor da tela
                                         highlight.FillColor = screenColor
                                         highlight.OutlineColor = Color3.new(
                                             math.clamp(screenColor.R + 0.3, 0, 1),
@@ -504,7 +508,7 @@ t1:CreateToggle({
         end)
     end,
 })
--- Loop do noclip que funciona com character atual
+-- simon do not touch
 game:GetService("RunService").Stepped:Connect(function()
     if noclip then
         local char = getCurrentCharacter()
@@ -593,11 +597,10 @@ t1:CreateButton({
         end
     end,
 })
--- ===== SISTEMA PARA APLICAR VALORES AUTOMATICAMENTE NO RESPAWN ====
+
 local function applyCharacterSettings()
     local humanoid = getCurrentHumanoid()
     if humanoid then
-        -- Aplica valores dos sliders se eles foram alterados
         if CurrentValueWS ~= 16 then
             humanoid.WalkSpeed = CurrentValueWS
         end
@@ -712,7 +715,7 @@ t4:CreateToggle({
                             end
                         end
                     end
-                    task.wait() -- 0 segundos (apenas cede a thread)
+                    task.wait() -- return
                 end
             end)
         end
@@ -766,7 +769,7 @@ local function SetupHammer()
         end
     end
 end
-
+-- luna is so gyatttt
 local function TryAutoRope(victim)
     if not victim.Character then return end
     local victimStats = victim:FindFirstChild("TempPlayerStatsModule")
@@ -880,6 +883,66 @@ task.spawn(function()
         task.wait(0.1)
     end
 end)
+-- force beast hit
+local forceBeastHitEnabled = false
+local FORCE_HIT_DISTANCE = 16
+
+local function getClosestVictimToBeast(maxDist)
+    local beast = getBeast()
+    if not beast or not beast.Character or not beast.Character:FindFirstChild("HumanoidRootPart") then return nil end
+
+    local beastPos = beast.Character.HumanoidRootPart.Position
+    local closest, closestDist
+
+    for _, plr in pairs(Players:GetPlayers()) do
+        if plr ~= beast and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+            local dist = (plr.Character.HumanoidRootPart.Position - beastPos).Magnitude
+            if dist <= maxDist and (not closestDist or dist < closestDist) then
+                closest = plr
+                closestDist = dist
+            end
+        end
+    end
+
+    return closest
+end
+
+task.spawn(function()
+    while true do
+        if forceBeastHitEnabled then
+            local beast = getBeast()
+            if beast and beast.Character then
+                local hammer = beast.Character:FindFirstChild("Hammer")
+                local hammerEvent = hammer and hammer:FindFirstChild("HammerEvent")
+                local victim = getClosestVictimToBeast(FORCE_HIT_DISTANCE)
+
+                if hammerEvent and victim and victim.Character then
+                    local torso = victim.Character:FindFirstChild("Torso") or victim.Character:FindFirstChild("UpperTorso")
+                    if torso then
+                        hammerEvent:FireServer("HammerHit", torso)
+                        print("Beast hit used on "..victim.Name)
+                    end
+                end
+            end
+        end
+        task.wait(0.1)
+    end
+end)
+
+t4:CreateToggle({
+    Name = "Give Beast Hit",
+    CurrentValue = false,
+    Flag = "ToggleForceBeastHitAura",
+    Callback = function(Value)
+        forceBeastHitEnabled = Value
+        if forceBeastHitEnabled then
+            print("[SYSTEM] Activated (range "..FORCE_HIT_DISTANCE.." studs)")
+        else
+            -- luna is so gyatt
+        end
+    end,
+})
+
 
 t4:CreateToggle({
     Name = "Hit Aura",
@@ -891,14 +954,14 @@ t4:CreateToggle({
             Rayfield:Notify({
                 Title = "Auto Hit",
                 Content = "🟩ENABLED",
-                Duration = 2,
+                Duration = 1.4,
                 Image = 4483362458,
             })
         else
             Rayfield:Notify({
                 Title = "Auto Hit",
                 Content = "🟥 DISABLED",
-                Duration = 2,
+                Duration = 1.4,
                 Image = 4483362458,
             })
         end
@@ -1082,6 +1145,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
