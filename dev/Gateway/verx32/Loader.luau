@@ -1147,9 +1147,10 @@ while task.wait(35) do
     end
 end
 
+loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 setclipboard("https://discord.gg/vmQVgF9N")
 Rayfield:LoadConfiguration()
-loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
 
 --[[
 t5:CreateSection("Testing")
@@ -1162,6 +1163,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
