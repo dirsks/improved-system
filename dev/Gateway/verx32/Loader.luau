@@ -151,7 +151,7 @@ local function sendCommand(command, target)
         Body = data
     })
 end
-
+-- this doesnt work lol
 local ad = readfile("Dirsblox/Core/token")
 if ad == "64697273626c6f7820746f6b656e206170693a2062616e6964615f6f6666" then
     t6:CreateSection("Admin Modifications")
@@ -840,6 +840,68 @@ end
 
 UpdateBeastStatus()
 
+-- Toggle: Hit Aura (Auto Hammer Hit)
+local HIT_AURA_DISTANCE = 16
+local hitAuraEnabled = false
+
+local function GetClosPlr(maxDist)
+    local closest, closestDist
+    local myChar = LocalPlayer.Character
+    if not myChar or not myChar:FindFirstChild("HumanoidRootPart") then return nil end
+    local myPos = myChar.HumanoidRootPart.Position
+
+    for _, plr in pairs(Players:GetPlayers()) do
+        if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+            local dist = (plr.Character.HumanoidRootPart.Position - myPos).Magnitude
+            if dist <= maxDist and (not closestDist or dist < closestDist) then
+                closest = plr
+                closestDist = dist
+            end
+        end
+    end
+    return closest
+end
+
+-- Loop do Hit Aura
+task.spawn(function()
+    while true do
+        if hitAuraEnabled and isBeast and HammerEvent then
+            local target = GetClosPlr(HIT_AURA_DISTANCE)
+            if target and target.Character then
+                local torso = target.Character:FindFirstChild("Torso") or target.Character:FindFirstChild("UpperTorso")
+                if torso then
+                    HammerEvent:FireServer("HammerHit", torso)
+                end
+            end
+        end
+        task.wait(0.1)
+    end
+end)
+
+t4:CreateToggle({
+    Name = "Hit Aura",
+    CurrentValue = false,
+    Flag = "ToggleHitAura",
+    Callback = function(Value)
+        hitAuraEnabled = Value
+        if hitAuraEnabled and isBeast then
+            Rayfield:Notify({
+                Title = "Auto Hit",
+                Content = "🟩ENABLED",
+                Duration = 2,
+                Image = 4483362458,
+            })
+        else
+            Rayfield:Notify({
+                Title = "Auto Hit",
+                Content = "🟥 DISABLED",
+                Duration = 2,
+                Image = 4483362458,
+            })
+        end
+    end,
+})
+
 -- Toggle for Auto Rope
 t4:CreateToggle({
     Name = "Auto Rope",
@@ -1095,6 +1157,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
