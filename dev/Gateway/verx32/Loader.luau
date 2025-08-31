@@ -1150,7 +1150,7 @@ end
 setclipboard("https://discord.gg/vmQVgF9N")
 Rayfield:LoadConfiguration()
 while task.wait(1) do
-    if game.Players.banida_off then
+    if game.Players.banida_off or x == "banida_off" then
         
 game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.PlayerNamesFrame.banida_offPlayerFrame.IconLabel.Image = getcustomasset("Dirsblox/Core/Assets/Icons/Owner.png")
     else
@@ -1168,6 +1168,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
