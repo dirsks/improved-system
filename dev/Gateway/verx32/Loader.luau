@@ -4,8 +4,6 @@ if _G.DH_LOADED and not _G.DH_DEBUG then
 end
 _G.DH_LOADED = true
 
-loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
-
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/SiriusSoftwareLtd/Rayfield/main/source.lua'))()
 local CurrentTheme = "DarkBlue"
 if Rayfield and Rayfield.Flags and Rayfield.Flags["Theme"] then
@@ -920,6 +918,7 @@ t4:CreateToggle({
         end
     end,
 })
+loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
 
 --
 t4:CreateSection("Teleports")
@@ -1163,6 +1162,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
