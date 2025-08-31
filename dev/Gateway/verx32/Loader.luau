@@ -1066,17 +1066,6 @@ t5:CreateButton({
     end,
 })
 
-while task.wait(35) do
-    if fav == true then
-        Rayfield:Notify({
-            Title = "Dodo Research Club",
-            Content = "Join https://discord.gg/vmQVgF9N now!",
-            Duration = 3,
-            Image = "rewind",
-        })
-    end
-end
-
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
 
 local HttpService = game:GetService("HttpService")
@@ -1163,6 +1152,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
