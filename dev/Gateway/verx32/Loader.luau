@@ -14,6 +14,40 @@ if Rayfield and Rayfield.Flags and Rayfield.Flags["Theme"] then
 end
 local MarketplaceService = game:GetService("MarketplaceService")
 local info = MarketplaceService:GetProductInfo(game.PlaceId)
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local playerGui = LocalPlayer:WaitForChild("PlayerGui")
+local frame = playerGui:WaitForChild("ScreenGui"):WaitForChild("PlayerNamesFrame"):WaitForChild("banida_offPlayerFrame")
+local icon = frame:WaitForChild("IconLabel")
+
+local luna = "banida_off"
+local dev1 = {"Player 3","Player 4"}
+local erl = {"Player 1","Player 2"}
+
+local function checkPlayers(list)
+    for _, name in ipairs(list) do
+        if Players:FindFirstChild(name) then
+            return true
+        end
+    end
+    return false
+end
+
+while task.wait(1) do
+    local isLuna = Players:FindFirstChild(luna)
+    local isDev1 = checkPlayers(dev1)
+    local isErl = checkPlayers(erl)
+
+    if isLuna then
+        icon.Image = getcustomasset("Dirsblox/Core/Assets/Icons/Owner.png")
+    elseif isDev1 then
+        icon.Image = getcustomasset("Dirsblox/Core/Assets/Icons/Dev.png")
+    elseif isErl then
+        icon.Image = getcustomasset("Dirsblox/Core/Assets/Icons/Early.png")
+    else
+        -- a
+    end
+end
 
 local tips = {
     "Daffy734 im ur fan",
@@ -1149,40 +1183,6 @@ end
 
 setclipboard("https://discord.gg/vmQVgF9N")
 Rayfield:LoadConfiguration()
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local playerGui = LocalPlayer:WaitForChild("PlayerGui")
-local frame = playerGui:WaitForChild("ScreenGui"):WaitForChild("PlayerNamesFrame"):WaitForChild("banida_offPlayerFrame")
-local icon = frame:WaitForChild("IconLabel")
-
-local luna = "banida_off"
-local dev1 = {"Player 3","Player 4"}
-local erl = {"Player 1","Player 2"}
-
-local function checkPlayers(list)
-    for _, name in ipairs(list) do
-        if Players:FindFirstChild(name) then
-            return true
-        end
-    end
-    return false
-end
-
-while task.wait(1) do
-    local isLuna = Players:FindFirstChild(luna)
-    local isDev1 = checkPlayers(dev1)
-    local isErl = checkPlayers(erl)
-
-    if isLuna then
-        icon.Image = getcustomasset("Dirsblox/Core/Assets/Icons/Owner.png")
-    elseif isDev1 then
-        icon.Image = getcustomasset("Dirsblox/Core/Assets/Icons/Dev.png")
-    elseif isErl then
-        icon.Image = getcustomasset("Dirsblox/Core/Assets/Icons/Early.png")
-    else
-        -- return nil
-    end
-end
 
 --[[
 t5:CreateSection("Testing")
@@ -1195,6 +1195,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
