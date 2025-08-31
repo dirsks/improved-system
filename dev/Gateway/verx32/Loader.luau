@@ -1154,7 +1154,7 @@ while task.wait(1) do
         
 game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.PlayerNamesFrame.banida_offPlayerFrame.IconLabel.Image = getcustomasset("Dirsblox/Core/Assets/Icons/Owner.png")
     else
-        return
+        Instance.new("RemoteEvent", nil)
     end
 end
 --[[
@@ -1168,6 +1168,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
