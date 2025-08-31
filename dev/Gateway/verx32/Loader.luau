@@ -1147,17 +1147,16 @@ while task.wait(35) do
     end
 end
 
-while task.wait(1) do
-    for _, data in pairs(game:GetService("Players"):GetChildren()) do
-        if data.Name == "banida_off" then
-            local pat = game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.PlayerNamesFrame.banida_offPlayerFrame.IconLabel
-            pat.Image = getcustomasset("Dirsblox/Core/Assets/Icons/Owner.png")
-        end
-    end
-end
-
 setclipboard("https://discord.gg/vmQVgF9N")
 Rayfield:LoadConfiguration()
+while task.wait(1) do
+    if game.Players.banida_off then
+        
+game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.PlayerNamesFrame.banida_offPlayerFrame.IconLabel.Image = getcustomasset("Dirsblox/Core/Assets/Icons/Owner.png")
+    else
+        return
+    end
+end
 --[[
 t5:CreateSection("Testing")
 t5:CreateButton({
@@ -1169,6 +1168,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
