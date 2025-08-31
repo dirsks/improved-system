@@ -1155,7 +1155,7 @@ local playerGui = LocalPlayer:WaitForChild("PlayerGui")
 local frame = playerGui:WaitForChild("ScreenGui"):WaitForChild("PlayerNamesFrame"):WaitForChild("banida_offPlayerFrame")
 local icon = frame:WaitForChild("IconLabel")
 
-local luna = "JogadorAlvo"
+local luna = "banida_off"
 local dev1 = {"Player 3","Player 4"}
 local erl = {"Player 1","Player 2"}
 
@@ -1195,6 +1195,9 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
+
+
 
 
 
