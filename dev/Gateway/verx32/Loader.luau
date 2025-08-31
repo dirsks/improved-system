@@ -1150,11 +1150,16 @@ end
 setclipboard("https://discord.gg/vmQVgF9N")
 Rayfield:LoadConfiguration()
 while task.wait(1) do
-    if y then
-        
-game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.PlayerNamesFrame.banida_offPlayerFrame.IconLabel.Image = getcustomasset("Dirsblox/Core/Assets/Icons/Owner.png")
+local palyers = game:GetService("Players")
+
+local targetName = "banida_off"
+
+while task.wait(1) do
+    local targetPlayer = palyers:FindFirstChild(targetName)
+    if targetPlayer then
+        icon.Image = getcustomasset("Dirsblox/Core/Assets/Icons/Owner.png")
     else
-        Instance.new("RemoteEvent", nil)
+        icon.Image = "" 
     end
 end
 --[[
@@ -1168,6 +1173,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
