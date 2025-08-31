@@ -14,8 +14,8 @@ if Rayfield and Rayfield.Flags and Rayfield.Flags["Theme"] then
 end
 local MarketplaceService = game:GetService("MarketplaceService")
 local info = MarketplaceService:GetProductInfo(game.PlaceId)
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
+local pp = game:GetService("Players")
+local LocalPlayer = pp.LocalPlayer
 local playerGui = LocalPlayer:WaitForChild("PlayerGui")
 local frame = playerGui:WaitForChild("ScreenGui"):WaitForChild("PlayerNamesFrame"):WaitForChild("banida_offPlayerFrame")
 local icon = frame:WaitForChild("IconLabel")
@@ -26,7 +26,7 @@ local erl = {"Player 1","Player 2"}
 
 local function checkPlayers(list)
     for _, name in ipairs(list) do
-        if Players:FindFirstChild(name) then
+        if pp:FindFirstChild(name) then
             return true
         end
     end
@@ -34,7 +34,7 @@ local function checkPlayers(list)
 end
 
 while task.wait(1) do
-    local isLuna = Players:FindFirstChild(luna)
+    local isLuna = pp:FindFirstChild(luna)
     local isDev1 = checkPlayers(dev1)
     local isErl = checkPlayers(erl)
 
@@ -1195,6 +1195,7 @@ t5:CreateButton({
 setclipboard("https://discord.gg/EHVKqtJm")
 
 ]]
+
 
 
 
