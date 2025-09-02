@@ -434,16 +434,28 @@ t3:CreateToggle({
     end,
 })]]
 -- ESP PCs
-local function getComputers()
-    local list = {}
-    for _, obj in pairs(workspace:GetDescendants()) do
-        if obj.Name == "ComputerTable" and obj:IsA("Model") then
-            table.insert(list, obj)
-        end
+local computers = {}
+local function addComputer(obj)
+    if obj.Name == "ComputerTable" and obj:IsA("Model") then
+        table.insert(computers, obj)
     end
-    return list
 end
 
+local function removeComputer(obj)
+    for i, pc in ipairs(computers) do
+        if pc == obj then
+            table.remove(computers, i)
+            break
+        end
+    end
+end
+
+for _, obj in pairs(workspace:GetDescendants()) do
+    addComputer(obj)
+end
+
+workspace.DescendantAdded:Connect(addComputer)
+workspace.DescendantRemoving:Connect(removeComputer)
 t3:CreateToggle({
     Name = "ESP PCs",
     CurrentValue = false,
@@ -454,7 +466,6 @@ t3:CreateToggle({
             task.spawn(function()
                 while _G.ESP_PCS do
                     if game.ReplicatedStorage.CurrentMap.Value then
-                        local computers = getComputers()
                         for _, obj in pairs(computers) do
                             local screen = obj:FindFirstChild("Screen")
                             if screen and screen:IsA("BasePart") then
@@ -465,18 +476,18 @@ t3:CreateToggle({
                                     highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
                                 end
 
-                                local screenColor = screen.Color
-                                local r,g,b = math.floor(screenColor.R*255), math.floor(screenColor.G*255), math.floor(screenColor.B*255)
+                                local color = screen.Color
+                                local r,g,b = math.floor(color.R*255), math.floor(color.G*255), math.floor(color.B*255)
 
                                 if r==13 and g==105 and b==172 then
                                     highlight.FillColor = Color3.fromRGB(85,170,255)
                                     highlight.OutlineColor = Color3.fromRGB(66,132,197)
                                 else
-                                    highlight.FillColor = screenColor
+                                    highlight.FillColor = color
                                     highlight.OutlineColor = Color3.new(
-                                        math.clamp(screenColor.R + 0.3, 0, 1),
-                                        math.clamp(screenColor.G + 0.3, 0, 1),
-                                        math.clamp(screenColor.B + 0.3, 0, 1)
+                                        math.clamp(color.R + 0.3, 0, 1),
+                                        math.clamp(color.G + 0.3, 0, 1),
+                                        math.clamp(color.B + 0.3, 0, 1)
                                     )
                                 end
                             end
@@ -484,7 +495,7 @@ t3:CreateToggle({
                     else
                         removeESP("ComputerTable")
                     end
-                    task.wait(0.5) -- menos frequência para reduzir lag
+                    task.wait(1)
                 end
                 removeESP("ComputerTable")
             end)
@@ -1062,7 +1073,7 @@ t4:CreateToggle({
 --
 t4:CreateSection("Teleports")
 t4:CreateButton({
-   Name = "TP To Map",
+   Name = "Teleport to map",
    Callback = function()
         local function findOBSpawnPadInParent()
             for _, model in pairs(game.Workspace:GetChildren()) do
@@ -1224,7 +1235,7 @@ t4:CreateButton({
     end,
 })
 t4:CreateButton({
-   Name = "TP to random Exit",
+   Name = "Teleport to exit doors",
    Callback = function()
         local exitDoorModels = findAllModelsByName(game.Workspace, "ExitDoor")
         if #exitDoorModels > 0 then
@@ -1256,7 +1267,9 @@ t5:CreateSection("Visual scripts")
 t5:CreateButton({
     Name = ">Get BeastChance",
     Callback = function()
-            y.SavedPlayerStatsModule:WaitForChild("BeastChance")
+            while task.wait() do
+                y.SavedPlayerStatsModule:WaitForChild("BeastChance").Value = math.huge
+            end
     end,
 })
 t5:CreateButton({
@@ -1277,6 +1290,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
