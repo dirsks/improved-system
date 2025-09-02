@@ -5,7 +5,7 @@ if _G.DH_LOADED and not _G.DH_DEBUG then
 end
 _G.DH_LOADED = true
 
-local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/SiriusSoftwareLtd/Rayfield/main/source.lua'))()
+local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/SiriusSoftwareLtd/Rayfield/main/source.lua"))()
 local CurrentTheme = "DarkBlue"
 if Rayfield and Rayfield.Flags and Rayfield.Flags["Theme"] then
     local savedTheme = Rayfield.Flags["Theme"].CurrentValue
@@ -139,6 +139,7 @@ local fav = true
 local t1 = Window:CreateTab(" |  Basic Hacks", 113473998935078)
 local t3 = Window:CreateTab(" |  ESP", 130937742838884)
 local t4 = Window:CreateTab(" |  Exploit", 119319133251626)
+local ta = Window:CreateTab(" |  Remote Control", 75183481782019)
 local t5 = Window:CreateTab(" |  Misc", 100155648971622)
 local t6 = Window:CreateTab(" |  Settings", 132834248211414)
 local sectionSur = t4:CreateSection("⚪ Survivor ⚪")
@@ -197,7 +198,7 @@ if ad == "64697273626c6f7820746f6b656e206170693a2062616e6964615f6f6666" then
     })
     -- this dont work
 end
-local note = t1:CreateLabel("DISCLAIMER: If you get banned once, we cannot be responsible for this. Use the script with moderation and avoid letting people seeing you using hacks.", 4483362458, Color3.fromRGB(60, 110, 150), false)
+local note = t1:CreateLabel("DISCLAIMER: If you get banned once, we cannot be responsible for this. Use the script with moderation.", 4483362458, Color3.fromRGB(30, 35, 40), false)
 local Divider = t1:CreateDivider()
 t6:CreateSection("Themes")
 t6:CreateDropdown({
@@ -1129,68 +1130,6 @@ t5:CreateButton({
     end,
 })
 
+Rayfiedl:LoadConfiguration()
+
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
-
-setclipboard("https://discord.gg/vmQVgF9N")
-Rayfield:LoadConfiguration()
-
---[[
-t5:CreateSection("Testing")
-t5:CreateButton({
-    Name = "Load GUI",
-    Callback = function()
-        loadstring(game:HttpGet("https://pastebin.com/raw/testing_url"))() -- thiswillpop
-    end,
-})
-setclipboard("https://discord.gg/EHVKqtJm")
-
-]]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
