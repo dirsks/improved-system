@@ -695,7 +695,6 @@ t4:CreateToggle({
     end,
 })
 
-ta:CreateSection("------------Remote Control------------")
 ta:CreateDivider()
 -- give hit
 local plyers = game:GetService("Players")
@@ -779,12 +778,7 @@ local function RopeBeast(beast)
                 if hammer then
                     local HammerEvent = hammer:FindFirstChild("HammerEvent")
                     if HammerEvent then
-                        local args = {
-                            "HammerTieUp",
-                            torso,
-                            hrp.Position
-                        }
-                        HammerEvent:FireServer(unpack(args))
+                        HammerEvent:FireServer("HammerTieUp", torso, hrp.Position)
                         print("[Auto Rope Beast] usado em:", beast.Name)
                     end
                 end
@@ -1089,7 +1083,7 @@ t4:CreateButton({
             Rayfield:Notify({
                 Title = "TP To Map",
                 Content = "OBSpawnPad not found.",
-                Duration = 3.5,
+                Duration = 1.5,
                 Image = "error",
             })
         end
@@ -1195,7 +1189,7 @@ t4:CreateButton({
                             if trigger2 then
                                 local tween = TweenService:Create(
                                     rootPart,
-                                    TweenInfo.new(1.5, Enum.EasingStyle.Linear),
+                                    TweenInfo.new(2.3, Enum.EasingStyle.Linear),
                                     {CFrame = trigger2.CFrame + Vector3.new(0, 3, 0)}
                                 )
                                 tween:Play()
@@ -1276,4 +1270,5 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
