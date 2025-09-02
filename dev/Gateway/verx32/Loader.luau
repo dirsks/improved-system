@@ -15,6 +15,7 @@ if Rayfield and Rayfield.Flags and Rayfield.Flags["Theme"] then
 end
 local MarketplaceService = game:GetService("MarketplaceService")
 local info = MarketplaceService:GetProductInfo(game.PlaceId)
+local TweenService = game:GetService("TweenService")
 
 local tips = {
     "Daffy734 im ur fan",
@@ -694,7 +695,8 @@ t4:CreateToggle({
     end,
 })
 
-t4:CreateSection("Troll (Good for incriminating)")
+ta:CreateSection("------------Remote Control------------")
+ta:CreateDivider()
 -- give hit
 local plyers = game:GetService("Players")
 local forceBeastHitEnabled = false
@@ -732,7 +734,11 @@ task.spawn(function()
                 if hammerEvent and victim and victim.Character then
                     local torso = victim.Character:FindFirstChild("Torso") or victim.Character:FindFirstChild("UpperTorso")
                     if torso then
-                        hammerEvent:FireServer("HammerHit", torso)
+                        local args = {
+                            "HammerHit",
+                            torso
+                        }
+                        hammerEvent:FireServer(unpack(args))
                         print("Beast hit used on "..victim.Name)
                     end
                 end
@@ -742,8 +748,75 @@ task.spawn(function()
     end
 end)
 
-t4:CreateToggle({
-    Name = "Give Beast Hit",
+-- give rope
+local plyers = game:GetService("Players")
+local LocalPlayer = plyers.LocalPlayer
+local autoRopeBeastEnabled = false
+local AUTO_ROPE_BEAST_DISTANCE = 32
+
+local function GetBeastPlayer()
+    for _, plr in pairs(plyers:GetPlayers()) do
+        if plr ~= LocalPlayer and plr:FindFirstChild("TempPlayerStatsModule") then
+            local stat = plr.TempPlayerStatsModule:FindFirstChild("IsBeast")
+            if stat and stat.Value == true then
+                return plr
+            end
+        end
+    end
+    return nil
+end
+
+local function RopeBeast(beast)
+    if not beast or not beast.Character then return end
+    local torso = beast.Character:FindFirstChild("Torso") or beast.Character:FindFirstChild("UpperTorso")
+    local hrp = beast.Character:FindFirstChild("HumanoidRootPart")
+    if torso and hrp then
+        local char = LocalPlayer.Character
+        if char and char:FindFirstChild("HumanoidRootPart") then
+            local dist = (hrp.Position - char.HumanoidRootPart.Position).Magnitude
+            if dist <= AUTO_ROPE_BEAST_DISTANCE then
+                local hammer = char:FindFirstChild("Hammer")
+                if hammer then
+                    local HammerEvent = hammer:FindFirstChild("HammerEvent")
+                    if HammerEvent then
+                        local args = {
+                            "HammerTieUp",
+                            torso,
+                            hrp.Position
+                        }
+                        HammerEvent:FireServer(unpack(args))
+                        print("[Auto Rope Beast] usado em:", beast.Name)
+                    end
+                end
+            end
+        end
+    end
+end
+
+task.spawn(function()
+    while true do
+        if autoRopeBeastEnabled then
+            local beast = GetBeastPlayer()
+            if beast then
+                RopeBeast(beast)
+            end
+        end
+        task.wait(0.2)
+    end
+end)
+
+ta:CreateSection("Remote Abuse - Givers")
+ta:CreateToggle({
+    Name = "Give Auto Rope",
+    CurrentValue = false,
+    Flag = "ToggleAutoRopeBeast",
+    Callback = function(Value)
+        autoRopeBeastEnabled = Value
+    end,
+})
+
+ta:CreateToggle({
+    Name = "Give Auto Hit",
     CurrentValue = false,
     Flag = "ToggleForceBeastHitAura",
     Callback = function(Value)
@@ -755,8 +828,10 @@ t4:CreateToggle({
         end
     end,
 })
+
+ta:CreateSection("Remote Abuse - Debuffs")
 --slowmo best
-t4:CreateToggle({
+ta:CreateToggle({
     Name = "Slow beast",
     CurrentValue = false,
     Flag = "ToggleSlowBeast",
@@ -783,7 +858,7 @@ t4:CreateToggle({
     end,
 })
 -- remove rope
-t4:CreateToggle({
+ta:CreateToggle({
     Name = "Auto Remove Rope",
     CurrentValue = false,
     Flag = "ToggleHammerClick",
@@ -908,7 +983,7 @@ end
 UpdateBeastStatus()
 
 -- Toggle: Hit Aura (Auto Hammer Hit)
-local HIT_AURA_DISTANCE = 16
+local HIT_AURA_DISTANCE = 32
 local hitAuraEnabled = false
 
 local function GetClosPlr(maxDist)
@@ -954,7 +1029,7 @@ t4:CreateToggle({
         if hitAuraEnabled and isBeast then
             Rayfield:Notify({
                 Title = "Auto Hit",
-                Content = "🟩ENABLED",
+                Content = "🟩 ENABLED",
                 Duration = 1.4,
                 Image = 4483362458,
             })
@@ -1057,26 +1132,94 @@ local function getRandomComputer()
     local randomIndex = math.random(1, #validComputers)
     return validComputers[randomIndex]
 end
+
+local function isTriggerOccupied(trigger)
+    if not trigger then return true end
+    for _, plr in pairs(Players:GetPlayers()) do
+        if plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+            local dist = (plr.Character.HumanoidRootPart.Position - trigger.Position).Magnitude
+            if dist < 4 then -- distância pequena para considerar "ocupado"
+                return true
+            end
+        end
+    end
+    return false
+end
+
+local function getAvailableTrigger(computer)
+    for i = 1, 3 do
+        local trigger = computer:FindFirstChild("ComputerTrigger"..i)
+        if trigger and not isTriggerOccupied(trigger) then
+            return trigger
+        end
+    end
+    return nil
+end
+
 t4:CreateButton({
     Name = "TP to random PC",
     Callback = function()
         local rootPart = getCurrentRootPart()
         local chosenComputer = getRandomComputer()
-        if rootPart and chosenComputer and chosenComputer.PrimaryPart then
-            local targetPos = chosenComputer.PrimaryPart.Position + Vector3.new(0, 5, 0)
-            rootPart.CFrame = CFrame.new(targetPos)
-            table.insert(recentComputers, chosenComputer)
-            if #recentComputers > 3 then
-                table.remove(recentComputers, 1)
+
+        if rootPart and chosenComputer then
+            local screen = chosenComputer:FindFirstChild("Screen")
+            if screen and screen:IsA("BasePart") then
+                local color = screen.Color
+                local r,g,b = math.floor(color.R*255), math.floor(color.G*255), math.floor(color.B*255)
+
+                if (r == 40 and g == 127 and b == 71) then
+                    -- green → ignore it and try another pc
+                    print("[TP PC] Ignorado: PC com tela verde")
+                    return
+                elseif (r == 13 and g == 105 and b == 172) then
+                    -- blu → teleport
+                    local trigger = getAvailableTrigger(chosenComputer)
+                    if trigger then
+                        local tween = TweenService:Create(
+                            rootPart,
+                            TweenInfo.new(1.5, Enum.EasingStyle.Linear),
+                            {CFrame = trigger.CFrame + Vector3.new(0, 3, 0)}
+                        )
+                        tween:Play()
+                        table.insert(recentComputers, chosenComputer)
+                        if #recentComputers > 3 then
+                            table.remove(recentComputers, 1)
+                        end
+                        return
+                    else
+                        print("All triggers busy, PC ignored")
+                        local another = getRandomComputer()
+                        if another and another ~= chosenComputer then
+                            local trigger2 = getAvailableTrigger(another)
+                            if trigger2 then
+                                local tween = TweenService:Create(
+                                    rootPart,
+                                    TweenInfo.new(1.5, Enum.EasingStyle.Linear),
+                                    {CFrame = trigger2.CFrame + Vector3.new(0, 3, 0)}
+                                )
+                                tween:Play()
+                                table.insert(recentComputers, another)
+                                if #recentComputers > 3 then
+                                    table.remove(recentComputers, 1)
+                                end
+                                return
+                            end
+                        end
+                    end
+                else
+                    print("Invalid color ("..r..","..g..","..b..")")
+                    return
+                end
             end
-        else
-            Rayfield:Notify({
-                Title = "TP to PC",
-                Content = "No computers found to teleport!",
-                Duration = 3.5,
-                Image = "error",
-            })
         end
+
+        Rayfield:Notify({
+            Title = "TP to PC",
+            Content = "No valid PCs found!",
+            Duration = 1.4,
+            Image = "error",
+        })
     end,
 })
 t4:CreateButton({
@@ -1130,6 +1273,7 @@ t5:CreateButton({
     end,
 })
 
-Rayfiedl:LoadConfiguration()
+Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
