@@ -22,7 +22,8 @@ local tips = {
     "Daffy734 is him",
     "Respect for Daffy734",
     "Mad respect for Daffy734",
-    "Daffy734 deserves all our respect"
+    "Daffy734 deserves all respect",
+    "Daffy734 is god of scripts"
 }
 local function GetRandomTip()
     local index = math.random(1, #tips)
@@ -433,6 +434,16 @@ t3:CreateToggle({
     end,
 })]]
 -- ESP PCs
+local function getComputers()
+    local list = {}
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj.Name == "ComputerTable" and obj:IsA("Model") then
+            table.insert(list, obj)
+        end
+    end
+    return list
+end
+
 t3:CreateToggle({
     Name = "ESP PCs",
     CurrentValue = false,
@@ -443,37 +454,37 @@ t3:CreateToggle({
             task.spawn(function()
                 while _G.ESP_PCS do
                     if game.ReplicatedStorage.CurrentMap.Value then
-                        for _, obj in pairs(workspace:GetDescendants()) do
-                            if obj.Name == "ComputerTable" and obj:IsA("Model") then
-                                local screen = obj:FindFirstChild("Screen")
-                                if screen and screen:IsA("BasePart") then
-                                    local highlight = obj:FindFirstChild("Highlight")
-                                    if not highlight then
-                                        highlight = Instance.new("Highlight", obj)
-                                        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                                    end
-                                    
-                                    local screenColor = screen.Color
-                                    local r,g,b = math.floor(screenColor.R*255), math.floor(screenColor.G*255), math.floor(screenColor.B*255)
+                        local computers = getComputers()
+                        for _, obj in pairs(computers) do
+                            local screen = obj:FindFirstChild("Screen")
+                            if screen and screen:IsA("BasePart") then
+                                local highlight = obj:FindFirstChild("Highlight")
+                                if not highlight then
+                                    highlight = Instance.new("Highlight")
+                                    highlight.Parent = obj
+                                    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                                end
 
-                                    if r==13 and g==105 and b==172 then
-                                        highlight.FillColor = Color3.fromRGB(85,170,255)
-                                        highlight.OutlineColor = Color3.fromRGB(66,132,197)
-                                    else
-                                        highlight.FillColor = screenColor
-                                        highlight.OutlineColor = Color3.new(
-                                            math.clamp(screenColor.R + 0.3, 0, 1),
-                                            math.clamp(screenColor.G + 0.3, 0, 1),
-                                            math.clamp(screenColor.B + 0.3, 0, 1)
-                                        )
-                                    end
+                                local screenColor = screen.Color
+                                local r,g,b = math.floor(screenColor.R*255), math.floor(screenColor.G*255), math.floor(screenColor.B*255)
+
+                                if r==13 and g==105 and b==172 then
+                                    highlight.FillColor = Color3.fromRGB(85,170,255)
+                                    highlight.OutlineColor = Color3.fromRGB(66,132,197)
+                                else
+                                    highlight.FillColor = screenColor
+                                    highlight.OutlineColor = Color3.new(
+                                        math.clamp(screenColor.R + 0.3, 0, 1),
+                                        math.clamp(screenColor.G + 0.3, 0, 1),
+                                        math.clamp(screenColor.B + 0.3, 0, 1)
+                                    )
                                 end
                             end
                         end
                     else
                         removeESP("ComputerTable")
                     end
-                    task.wait(1)
+                    task.wait(0.5) -- menos frequência para reduzir lag
                 end
                 removeESP("ComputerTable")
             end)
@@ -1266,6 +1277,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
