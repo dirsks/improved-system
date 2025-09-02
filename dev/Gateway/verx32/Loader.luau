@@ -473,7 +473,7 @@ t3:CreateToggle({
                     else
                         removeESP("ComputerTable")
                     end
-                    task.wait(0.2)
+                    task.wait(1)
                 end
                 removeESP("ComputerTable")
             end)
@@ -733,11 +733,7 @@ task.spawn(function()
                 if hammerEvent and victim and victim.Character then
                     local torso = victim.Character:FindFirstChild("Torso") or victim.Character:FindFirstChild("UpperTorso")
                     if torso then
-                        local args = {
-                            "HammerHit",
-                            torso
-                        }
-                        hammerEvent:FireServer(unpack(args))
+                        hammerEvent:FireServer("HammerHit", torso)
                         print("Beast hit used on "..victim.Name)
                     end
                 end
@@ -1151,7 +1147,7 @@ local function getAvailableTrigger(computer)
 end
 
 t4:CreateButton({
-    Name = "TP to random PC",
+    Name = "Teleport to PC [⚠]",
     Callback = function()
         local rootPart = getCurrentRootPart()
         local chosenComputer = getRandomComputer()
@@ -1263,12 +1259,13 @@ t5:CreateButton({
     Callback = function()
             local g = game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.PlayerNamesFrame
             y.SavedPlayerStatsModule:WaitForChild("Level").Value = 1000
-            g:WaitForChild(y.Name.."PlayerFrame").Text = y.SavedPlayerStatsModule.Level.Value
+            g:WaitForChild(y.Name.."PlayerFrame").LevelLabel.Text = y.SavedPlayerStatsModule.Level.Value
     end,
 })
 
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
