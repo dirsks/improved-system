@@ -435,75 +435,88 @@ t3:CreateToggle({
 })]]
 -- ESP PCs
 local computers = {}
-local function addComputer(obj)
-    if obj.Name == "ComputerTable" and obj:IsA("Model") then
-        table.insert(computers, obj)
-    end
-end
+local function setupComputer(pc)
+    if not pc:IsA("Model") then return end
+    if computers[pc] then return end
 
-local function removeComputer(obj)
-    for i, pc in ipairs(computers) do
-        if pc == obj then
-            table.remove(computers, i)
-            break
+    local screen = pc:FindFirstChild("Screen")
+    if not screen or not screen:IsA("BasePart") then return end
+
+    -- cria highlight 1 vez
+    local highlight = Instance.new("Highlight")
+    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+    highlight.Parent = pc
+
+    local function updateColor()
+        local color = screen.Color
+        local r,g,b = math.floor(color.R*255), math.floor(color.G*255), math.floor(color.B*255)
+
+        if r==13 and g==105 and b==172 then
+            highlight.FillColor = Color3.fromRGB(85,170,255)
+            highlight.OutlineColor = Color3.fromRGB(66,132,197)
+        else
+            highlight.FillColor = color
+            highlight.OutlineColor = Color3.new(
+                math.clamp(color.R + 0.3, 0, 1),
+                math.clamp(color.G + 0.3, 0, 1),
+                math.clamp(color.B + 0.3, 0, 1)
+            )
         end
     end
+
+    -- atualiza agora e quando a cor mudar
+    updateColor()
+    screen:GetPropertyChangedSignal("Color"):Connect(updateColor)
+
+    computers[pc] = highlight
 end
 
+local function removeComputer(pc)
+    if computers[pc] then
+        computers[pc]:Destroy()
+        computers[pc] = nil
+    end
+end
+
+-- inicializa já existentes
 for _, obj in pairs(workspace:GetDescendants()) do
-    addComputer(obj)
+    if obj.Name == "ComputerTable" then
+        setupComputer(obj)
+    end
 end
 
-workspace.DescendantAdded:Connect(addComputer)
-workspace.DescendantRemoving:Connect(removeComputer)
+workspace.DescendantAdded:Connect(function(obj)
+    if obj.Name == "ComputerTable" then
+        setupComputer(obj)
+    end
+end)
+
+workspace.DescendantRemoving:Connect(function(obj)
+    if obj.Name == "ComputerTable" then
+        removeComputer(obj)
+    end
+end)
+
+-- Toggle ESP PCs
 t3:CreateToggle({
     Name = "ESP PCs",
     CurrentValue = false,
     Flag = "TogglePCsESP",
     Callback = function(Value)
-        _G.ESP_PCS = Value
         if Value then
-            task.spawn(function()
-                while _G.ESP_PCS do
-                    if game.ReplicatedStorage.CurrentMap.Value then
-                        for _, obj in pairs(computers) do
-                            local screen = obj:FindFirstChild("Screen")
-                            if screen and screen:IsA("BasePart") then
-                                local highlight = obj:FindFirstChild("Highlight")
-                                if not highlight then
-                                    highlight = Instance.new("Highlight")
-                                    highlight.Parent = obj
-                                    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                                end
-
-                                local color = screen.Color
-                                local r,g,b = math.floor(color.R*255), math.floor(color.G*255), math.floor(color.B*255)
-
-                                if r==13 and g==105 and b==172 then
-                                    highlight.FillColor = Color3.fromRGB(85,170,255)
-                                    highlight.OutlineColor = Color3.fromRGB(66,132,197)
-                                else
-                                    highlight.FillColor = color
-                                    highlight.OutlineColor = Color3.new(
-                                        math.clamp(color.R + 0.3, 0, 1),
-                                        math.clamp(color.G + 0.3, 0, 1),
-                                        math.clamp(color.B + 0.3, 0, 1)
-                                    )
-                                end
-                            end
-                        end
-                    else
-                        removeESP("ComputerTable")
-                    end
-                    task.wait(1)
-                end
-                removeESP("ComputerTable")
-            end)
+            -- habilita highlights existentes
+            for pc, hl in pairs(computers) do
+                hl.Enabled = true
+            end
         else
-            removeESP("ComputerTable")
+            -- desliga highlights sem destruir
+            for pc, hl in pairs(computers) do
+                hl.Enabled = false
+            end
         end
     end,
 })
+
 
 -- Basic Hacks buttons
 local noclip = false
@@ -1167,9 +1180,9 @@ local function getAvailableTrigger(computer)
     end
     return nil
 end
-
+-- tp pc
 t4:CreateButton({
-    Name = "Teleport to PC [⚠]",
+    Name = "Teleport to PC [Safe]",
     Callback = function()
         local rootPart = getCurrentRootPart()
         local chosenComputer = getRandomComputer()
@@ -1181,41 +1194,46 @@ t4:CreateButton({
                 local r,g,b = math.floor(color.R*255), math.floor(color.G*255), math.floor(color.B*255)
 
                 if (r == 40 and g == 127 and b == 71) then
-                    -- green → ignore it and try another pc
                     print("[TP PC] Ignorado: PC com tela verde")
                     return
                 elseif (r == 13 and g == 105 and b == 172) then
-                    -- blu → teleport
                     local trigger = getAvailableTrigger(chosenComputer)
                     if trigger then
-                        local tween = TweenService:Create(
-                            rootPart,
-                            TweenInfo.new(1.5, Enum.EasingStyle.Linear),
-                            {CFrame = trigger.CFrame + Vector3.new(0, 3, 0)}
-                        )
-                        tween:Play()
-                        table.insert(recentComputers, chosenComputer)
-                        if #recentComputers > 3 then
-                            table.remove(recentComputers, 1)
+                        local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+                        if humanoid then
+                            local offset = Vector3.new(
+                                math.random(-1, 1),
+                                0,
+                                math.random(-1, 1)
+                            )
+                            local targetPos = trigger.Position + Vector3.new(0, 3, 0) + offset
+                            humanoid:MoveTo(targetPos)
+                            humanoid.MoveToFinished:Wait(2)
+
+                            table.insert(recentComputers, chosenComputer)
+                            if #recentComputers > 3 then
+                                table.remove(recentComputers, 1)
+                            end
+                            return
                         end
-                        return
                     else
-                        print("All triggers busy, PC ignored")
+                        print("All triggers busy, trying another PC...")
                         local another = getRandomComputer()
                         if another and another ~= chosenComputer then
                             local trigger2 = getAvailableTrigger(another)
                             if trigger2 then
-                                local tween = TweenService:Create(
-                                    rootPart,
-                                    TweenInfo.new(2.3, Enum.EasingStyle.Linear),
-                                    {CFrame = trigger2.CFrame + Vector3.new(0, 3, 0)}
-                                )
-                                tween:Play()
-                                table.insert(recentComputers, another)
-                                if #recentComputers > 3 then
-                                    table.remove(recentComputers, 1)
+                                local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+                                if humanoid then
+                                    local targetPos = trigger2.Position + Vector3.new(0, 3, 0)
+                                    humanoid:MoveTo(targetPos)
+                                    humanoid.MoveToFinished:Wait(2)
+
+                                    table.insert(recentComputers, another)
+                                    if #recentComputers > 3 then
+                                        table.remove(recentComputers, 1)
+                                    end
+                                    return
                                 end
-                                return
                             end
                         end
                     end
@@ -1234,6 +1252,7 @@ t4:CreateButton({
         })
     end,
 })
+-- end
 t4:CreateButton({
    Name = "Teleport to exit doors",
    Callback = function()
@@ -1290,6 +1309,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
