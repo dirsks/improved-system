@@ -409,6 +409,77 @@ t3:CreateToggle({
     end,
 })
 
+-- ================= ESP PCs ATUALIZADO (RESET POR MAPA REAL) =================
+local pcHighlights = {}
+local mapVal = game.ReplicatedStorage:WaitForChild("CurrentMap")
+
+local function clearAllPCs()
+    for pc, hl in pairs(pcHighlights) do
+        if hl then hl:Destroy() end
+    end
+    pcHighlights = {}
+    print("[ESP PCs] Resetado.")
+end
+
+local function updatePCColor(pc, highlight)
+    local screen = pc:FindFirstChild("Screen")
+    if not screen or not screen:IsA("BasePart") then return end
+
+    local color = screen.Color
+    local r,g,b = math.floor(color.R*255), math.floor(color.G*255), math.floor(color.B*255)
+
+    if r==40 and g==127 and b==71 then
+        highlight.FillColor = Color3.fromRGB(40,127,71)
+        highlight.OutlineColor = Color3.fromRGB(60,180,100)
+    elseif r==13 and g==105 and b==172 then
+        highlight.FillColor = Color3.fromRGB(13,105,172)
+        highlight.OutlineColor = Color3.fromRGB(66,132,197)
+    elseif r==196 and g==40 and b==28 then
+        highlight.FillColor = Color3.fromRGB(196,40,28)
+        highlight.OutlineColor = Color3.fromRGB(255,100,100)
+    else
+        highlight.FillColor = color
+        highlight.OutlineColor = Color3.new(
+            math.clamp(color.R + 0.3, 0, 1),
+            math.clamp(color.G + 0.3, 0, 1),
+            math.clamp(color.B + 0.3, 0, 1)
+        )
+    end
+end
+
+local function setupPC(pc)
+    if not pc:IsA("Model") or pcHighlights[pc] then return end
+    local screen = pc:FindFirstChild("Screen")
+    if not screen or not screen:IsA("BasePart") then return end
+
+    local highlight = Instance.new("Highlight")
+    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+    highlight.Parent = pc
+    highlight.Enabled = _G.ESP_PCS or false
+
+    pcHighlights[pc] = highlight
+    updatePCColor(pc, highlight)
+
+    screen:GetPropertyChangedSignal("Color"):Connect(function()
+        if _G.ESP_PCS and highlight then
+            updatePCColor(pc, highlight)
+        end
+    end)
+end
+
+local function setupAllPCsForMap(mapModel)
+    clearAllPCs()
+    if not _G.ESP_PCS or not mapModel then return end
+
+    -- procurar PCs apenas dentro do mapa
+    for _, obj in pairs(mapModel:GetDescendants()) do
+        if obj.Name == "ComputerTable" then
+            setupPC(obj)
+        end
+    end
+end
+
+-- toggle ESP
 t3:CreateToggle({
     Name = "ESP PCs",
     CurrentValue = false,
@@ -416,23 +487,26 @@ t3:CreateToggle({
     Callback = function(Value)
         _G.ESP_PCS = Value
         if Value then
-            task.spawn(function()
-                while _G.ESP_PCS do
-                    if game.ReplicatedStorage.CurrentMap.Value then
-                        applyESP("ComputerTable", Color3.fromRGB(0,0,255), Color3.fromRGB(127,127,255))
-                    else
-                        removeESP("ComputerTable")
-                    end
-                    task.wait(1)
-                end
-                removeESP("ComputerTable")
-            end)
+            if mapVal.Value then
+                task.delay(2, function() -- esperar mapa spawnar
+                    setupAllPCsForMap(mapVal.Value)
+                end)
+            end
         else
-            removeESP("ComputerTable")
+            clearAllPCs()
         end
     end,
 })
 
+-- reset automático quando o mapa muda
+mapVal:GetPropertyChangedSignal("Value"):Connect(function()
+    clearAllPCs()
+    if _G.ESP_PCS and mapVal.Value then
+        task.delay(2, function() -- esperar PCs carregarem
+            setupAllPCsForMap(mapVal.Value)
+        end)
+    end
+end)
 -- Basic Hacks buttons
 local noclip = false
 local sectionNoclip = t1:CreateSection("Noclip/Inf jump")
@@ -1474,6 +1548,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
