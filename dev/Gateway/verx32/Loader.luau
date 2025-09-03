@@ -1276,6 +1276,7 @@ local autoFarmEnabled = false
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
+-- função para checar se todos já foram capturados
 local function allPlayersCaptured()
     for _, plr in pairs(Players:GetPlayers()) do
         if plr ~= LocalPlayer and plr:FindFirstChild("TempPlayerStatsModule") then
@@ -1288,6 +1289,7 @@ local function allPlayersCaptured()
     return true
 end
 
+-- pegar PCs azuis
 local function getBluePC()
     for _, obj in pairs(workspace:GetDescendants()) do
         if obj.Name == "ComputerTable" and obj:IsA("Model") then
@@ -1304,24 +1306,20 @@ local function getBluePC()
     return nil
 end
 
+-- pegar portas de saída
 local function getRandomExit()
-    local exits = {}
-    for _, obj in pairs(workspace:GetDescendants()) do
-        if obj.Name == "ExitDoor" and obj:IsA("Model") then
-            table.insert(exits, obj)
-        end
-    end
+    local exits = findAllModelsByName(workspace, "ExitDoor")
     if #exits > 0 then
         return exits[math.random(1, #exits)]
     end
     return nil
 end
 
+-- pegar pod
 local function getFreezePod()
-    for _, obj in pairs(workspace:GetDescendants()) do
-        if obj.Name == "FreezePod" and obj:IsA("Model") then
-            return obj
-        end
+    local pods = findAllModelsByName(workspace, "FreezePod")
+    if #pods > 0 then
+        return pods[math.random(1, #pods)]
     end
     return nil
 end
@@ -1334,6 +1332,7 @@ t4:CreateToggle({
         autoFarmEnabled = Value
         if Value then
             task.spawn(function()
+                print("[AutoFarm] iniciado.")
                 while autoFarmEnabled do
                     local stats = LocalPlayer:FindFirstChild("TempPlayerStatsModule")
                     if not stats then break end
@@ -1342,71 +1341,80 @@ t4:CreateToggle({
                     if not isBeast then
                         -- ================= SURVIVOR =================
                         _G.InputActionEnabled = true -- Auto Interact
-                        _G.AutomaticHackingEnabled = true -- Anti Pc Error
+                        _G.AutomaticHackingEnabled = true -- Anti PC Error
+                        print("[AutoFarm] Jogador é sobrevivente.")
 
-                        local rootPart = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                        local rootPart = getCurrentRootPart()
                         if rootPart then
                             local pc = getBluePC()
                             if pc then
-                                local trigger = pc:FindFirstChild("ComputerTrigger1")
+                                local trigger = getAvailableTrigger(pc)
                                 if trigger then
-                                    rootPart.CFrame = trigger.CFrame + Vector3.new(0,3,0)
+                                    print("[AutoFarm] Teleportando para PC azul...")
+                                    smoothTeleport(rootPart, trigger.CFrame + Vector3.new(0,3,0), 1.5)
                                 end
                             else
                                 local exit = getRandomExit()
                                 if exit then
-                                    rootPart.CFrame = exit:GetPivot() * CFrame.new(0,0,-5)
+                                    print("[AutoFarm] Nenhum PC azul, indo para ExitDoor...")
+                                    local pivot = exit:GetPivot()
+                                    rootPart.CFrame = pivot * CFrame.new(0,0,-5)
                                 end
                             end
                         end
 
                     else
                         -- ================= BEAST =================
+                        print("[AutoFarm] Jogador é a Besta.")
                         local carried = LocalPlayer:FindFirstChild("CarriedTorso")
                         if carried and carried.Value ~= nil then
+                            print("[AutoFarm] Já está carregando alguém, aguardando soltar...")
                             repeat task.wait(0.5) until carried.Value == nil or not autoFarmEnabled
                         end
 
                         for _, plr in pairs(Players:GetPlayers()) do
-                            if plr ~= LocalPlayer and plr.Character and not (plr.TempPlayerStatsModule.Captured.Value) then
-                                local rootPart = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-                                local targetRoot = plr.Character:FindFirstChild("HumanoidRootPart")
-                                if rootPart and targetRoot then
-                                    rootPart.CFrame = targetRoot.CFrame + Vector3.new(0,0,2)
-                                    task.wait(0.3)
+                            if not autoFarmEnabled then break end
+                            if plr ~= LocalPlayer and plr.Character and plr:FindFirstChild("TempPlayerStatsModule") then
+                                if not plr.TempPlayerStatsModule.Captured.Value then
+                                    local rootPart = getCurrentRootPart()
+                                    local targetRoot = plr.Character:FindFirstChild("HumanoidRootPart")
+                                    if rootPart and targetRoot then
+                                        print("[AutoFarm] Indo até "..plr.Name)
+                                        rootPart.CFrame = targetRoot.CFrame + Vector3.new(0,0,2)
+                                        task.wait(0.3)
+                                    end
+
+                                    -- Auto Hit / Auto Rope
+                                    forceBeastHitEnabled = true
+                                    autoRopeEnabled = true
+                                    print("[AutoFarm] Atacando "..plr.Name)
+
+                                    task.wait(0.7)
+
+                                    -- levar para o pod
+                                    local pod = getFreezePod()
+                                    if pod and rootPart then
+                                        print("[AutoFarm] Levando "..plr.Name.." para o FreezePod")
+                                        rootPart.CFrame = pod:GetPivot() + Vector3.new(0,3,0)
+                                    end
+
+                                    _G.InputActionEnabled = true -- Auto Interact
+                                    task.wait(1)
                                 end
-
-                                -- Auto Hit / Auto Rope
-                                forceBeastHitEnabled = true
-                                autoRopeEnabled = true
-
-                                task.wait(0.7)
-
-                                -- levar pro pod
-                                local pod = getFreezePod()
-                                if pod and rootPart then
-                                    rootPart.CFrame = pod:GetPivot() + Vector3.new(0,3,0)
-                                end
-
-                                _G.InputActionEnabled = true -- Auto Interact para prender
-                                task.wait(1)
                             end
                         end
                     end
 
                     if allPlayersCaptured() then
                         autoFarmEnabled = false
-                        Rayfield:Notify({
-                            Title = "Auto Farm",
-                            Content = "✅ Todos foram capturados!",
-                            Duration = 3,
-                            Image = 4483362458,
-                        })
+                        print("[AutoFarm] ✅ Todos foram capturados! Encerrando loop.")
                         break
                     end
                     task.wait(1)
                 end
             end)
+        else
+            print("[AutoFarm] parado.")
         end
     end,
 })
@@ -1451,6 +1459,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
