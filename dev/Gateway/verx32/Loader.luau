@@ -1276,6 +1276,21 @@ local autoFarmEnabled = false
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
+-- lista de PCs já hackeados
+local usedPCs = {}
+
+-- função para resetar PCs usados (nova partida)
+local function resetUsedPCs()
+    usedPCs = {}
+    print("[AutoFarm] Lista de PCs resetada (nova partida).")
+end
+
+-- reset quando o mapa mudar (nova rodada)
+local mapVal = game.ReplicatedStorage:WaitForChild("CurrentMap")
+mapVal:GetPropertyChangedSignal("Value"):Connect(function()
+    resetUsedPCs()
+end)
+
 -- função para checar se todos já foram capturados
 local function allPlayersCaptured()
     for _, plr in pairs(Players:GetPlayers()) do
@@ -1289,24 +1304,25 @@ local function allPlayersCaptured()
     return true
 end
 
--- pegar PCs azuis
-local function getBluePC()
+-- pega PCs azuis não usados
+local function getAvailableBluePCs()
+    local blue = {}
     for _, obj in pairs(workspace:GetDescendants()) do
-        if obj.Name == "ComputerTable" and obj:IsA("Model") then
+        if obj.Name == "ComputerTable" and obj:IsA("Model") and not table.find(usedPCs, obj) then
             local screen = obj:FindFirstChild("Screen")
             if screen and screen:IsA("BasePart") then
                 local color = screen.Color
                 local r,g,b = math.floor(color.R*255), math.floor(color.G*255), math.floor(color.B*255)
                 if r==13 and g==105 and b==172 then
-                    return obj
+                    table.insert(blue, obj)
                 end
             end
         end
     end
-    return nil
+    return blue
 end
 
--- pegar portas de saída
+-- pega uma exit aleatória
 local function getRandomExit()
     local exits = findAllModelsByName(workspace, "ExitDoor")
     if #exits > 0 then
@@ -1315,7 +1331,7 @@ local function getRandomExit()
     return nil
 end
 
--- pegar pod
+-- pega pod aleatório
 local function getFreezePod()
     local pods = findAllModelsByName(workspace, "FreezePod")
     if #pods > 0 then
@@ -1331,6 +1347,7 @@ t4:CreateToggle({
     Callback = function(Value)
         autoFarmEnabled = Value
         if Value then
+            resetUsedPCs()
             task.spawn(function()
                 print("[AutoFarm] iniciado.")
                 while autoFarmEnabled do
@@ -1346,17 +1363,34 @@ t4:CreateToggle({
 
                         local rootPart = getCurrentRootPart()
                         if rootPart then
-                            local pc = getBluePC()
-                            if pc then
-                                local trigger = getAvailableTrigger(pc)
+                            local bluePCs = getAvailableBluePCs()
+                            if #bluePCs > 0 then
+                                local chosenPC = bluePCs[math.random(1, #bluePCs)]
+                                local trigger = getAvailableTrigger(chosenPC)
                                 if trigger then
-                                    print("[AutoFarm] Teleportando para PC azul...")
+                                    print("[AutoFarm] Indo para PC azul...")
                                     smoothTeleport(rootPart, trigger.CFrame + Vector3.new(0,3,0), 1.5)
+
+                                    -- esperar tela mudar pra verde
+                                    local screen = chosenPC:FindFirstChild("Screen")
+                                    if screen then
+                                        print("[AutoFarm] Hackeando PC...")
+                                        repeat
+                                            task.wait(1)
+                                            local color = screen.Color
+                                            local r,g,b = math.floor(color.R*255), math.floor(color.G*255), math.floor(color.B*255)
+                                            if not (r==13 and g==105 and b==172) then
+                                                print("[AutoFarm] PC concluído! Adicionando à lista de usados.")
+                                                table.insert(usedPCs, chosenPC)
+                                                break
+                                            end
+                                        until not autoFarmEnabled or not screen.Parent
+                                    end
                                 end
                             else
                                 local exit = getRandomExit()
                                 if exit then
-                                    print("[AutoFarm] Nenhum PC azul, indo para ExitDoor...")
+                                    print("[AutoFarm] Nenhum PC azul restante, indo para ExitDoor...")
                                     local pivot = exit:GetPivot()
                                     rootPart.CFrame = pivot * CFrame.new(0,0,-5)
                                 end
@@ -1459,6 +1493,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
