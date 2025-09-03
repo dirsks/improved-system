@@ -848,7 +848,7 @@ ta:CreateButton({
         end
 
         print("[ForceHitAll] Forçando HIT em todos os jogadores...")
-        for _, target in pairs(Players:GetPlayers()) do
+        for _, target in pairs(game.Players:GetChildren()) do
             if target ~= beast and target.Character then
                 local torso = target.Character:FindFirstChild("Torso") or target.Character:FindFirstChild("UpperTorso")
                 if torso then
@@ -1521,6 +1521,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
