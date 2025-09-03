@@ -1086,7 +1086,7 @@ t4:CreateToggle({
 --
 t4:CreateSection("Teleports")
 t4:CreateButton({
-   Name = "Teleport to map",
+   Name = "Teleport to map [⚠]",
    Callback = function()
         local function findOBSpawnPadInParent()
             for _, model in pairs(game.Workspace:GetChildren()) do
@@ -1195,56 +1195,66 @@ local function smoothTeleport(rootPart, targetCFrame, duration)
     end
 end
 
+-- ⚡ Botão para teleportar apenas em PCs azuis
 t4:CreateButton({
-    Name = "Teleport to PC [Safe Tween]",
+    Name = "Teleport to PC [Blue only]",
     Callback = function()
         local rootPart = getCurrentRootPart()
-        local chosenComputer = getRandomComputer()
+        if not rootPart then return end
 
-        if rootPart and chosenComputer then
-            local screen = chosenComputer:FindFirstChild("Screen")
-            if screen and screen:IsA("BasePart") then
-                local color = screen.Color
-                local r,g,b = math.floor(color.R*255), math.floor(color.G*255), math.floor(color.B*255)
-
-                if (r == 40 and g == 127 and b == 71) then
-                    print("[TP PC] Ignorado: PC com tela verde")
-                    return
-                elseif (r == 13 and g == 105 and b == 172) then
-                    local trigger = getAvailableTrigger(chosenComputer)
-                    if trigger then
-                        local targetCFrame = trigger.CFrame + Vector3.new(0, 3, 0)
-
-                        -- faz “tween manual” em micro passos
-                        smoothTeleport(rootPart, targetCFrame, 1.5)
-
-                        table.insert(recentComputers, chosenComputer)
-                        if #recentComputers > 3 then
-                            table.remove(recentComputers, 1)
-                        end
-                        return
-                    else
-                        print("All triggers busy, PC ignored")
+        -- pega todos os PCs azuis
+        local bluePCs = {}
+        for _, obj in pairs(workspace:GetDescendants()) do
+            if obj.Name == "ComputerTable" and obj:IsA("Model") then
+                local screen = obj:FindFirstChild("Screen")
+                if screen and screen:IsA("BasePart") then
+                    local color = screen.Color
+                    local r,g,b = math.floor(color.R*255), math.floor(color.G*255), math.floor(color.B*255)
+                    if r==13 and g==105 and b==172 then
+                        table.insert(bluePCs, obj)
                     end
-                else
-                    print("Invalid color ("..r..","..g..","..b..")")
-                    return
                 end
             end
         end
 
-        Rayfield:Notify({
-            Title = "TP to PC",
-            Content = "No valid PCs found!",
-            Duration = 1.4,
-            Image = "error",
-        })
+        -- nenhum PC azul encontrado
+        if #bluePCs == 0 then
+            Rayfield:Notify({
+                Title = "TP to PC",
+                Content = "done",
+                Duration = 1.5,
+                Image = "check",
+            })
+            return
+        end
+
+        -- escolhe um PC azul aleatório
+        local chosenComputer = bluePCs[math.random(1, #bluePCs)]
+        local trigger = getAvailableTrigger(chosenComputer)
+
+        if trigger then
+            local targetCFrame = trigger.CFrame + Vector3.new(0, 3, 0)
+
+            -- teleport seguro via micro-steps
+            smoothTeleport(rootPart, targetCFrame, 1.5)
+
+            table.insert(recentComputers, chosenComputer)
+            if #recentComputers > 3 then
+                table.remove(recentComputers, 1)
+            end
+        else
+            Rayfield:Notify({
+                Title = "TP to PC",
+                Content = "All triggers busy!",
+                Duration = 1.5,
+                Image = "error",
+            })
+        end
     end,
 })
-
 -- end
 t4:CreateButton({
-   Name = "Teleport to exit doors",
+   Name = "Teleport to exit doors [?]",
    Callback = function()
         local exitDoorModels = findAllModelsByName(game.Workspace, "ExitDoor")
         if #exitDoorModels > 0 then
@@ -1299,6 +1309,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
