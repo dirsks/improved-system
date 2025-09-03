@@ -734,7 +734,7 @@ ta:CreateDivider()
 -- down everyoc
 local plyers = game:GetService("Players")
 local HENTAI = false
-local JOT = math.huge
+local JOT = 200
 
 local function GetClis(maxDist)
     local beast = getBeast()
@@ -1546,6 +1546,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
