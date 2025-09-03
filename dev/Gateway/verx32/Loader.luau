@@ -418,7 +418,6 @@ local function clearAllPCs()
         if hl then hl:Destroy() end
     end
     pcHighlights = {}
-    print("[ESP PCs] Resetado.")
 end
 
 local function updatePCColor(pc, highlight)
@@ -487,11 +486,17 @@ t3:CreateToggle({
     Callback = function(Value)
         _G.ESP_PCS = Value
         if Value then
-            if mapVal.Value then
-                task.delay(2, function() -- esperar mapa spawnar
-                    setupAllPCsForMap(mapVal.Value)
-                end)
-            end
+            task.spawn(function()
+                while _G.ESP_PCS do
+                    if mapVal.Value then
+                        task.wait(2)
+                        setupAllPCsForMap(mapVal.Value)
+                    else
+                        clearAllPCs()
+                    end
+                    task.wait(5)
+                end
+            end)
         else
             clearAllPCs()
         end
@@ -1548,6 +1553,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
