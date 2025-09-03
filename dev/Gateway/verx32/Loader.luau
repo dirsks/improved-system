@@ -830,7 +830,41 @@ task.spawn(function()
     end
 end)
 
-ta:CreateSection("Remote Abuse - Givers")
+ta:CreateSection("Remote Abuse - Troll")
+t4:CreateButton({
+    Name = "Hit down everyone",
+    Callback = function()
+        local beast = getBeast()
+        if not beast or not beast.Character then
+            print("Round isnt set")
+            return
+        end
+
+        local hammer = beast.Character:FindFirstChild("Hammer")
+        if not hammer then
+            print("Beast doesnt have a hammer")
+            return
+        end
+
+        local hammerEvent = hammer:FindFirstChild("HammerEvent")
+        if not hammerEvent then
+            print("No beast found")
+            return
+        end
+
+        print("Hitting everyone")
+        for _, plr in pairs(Players:GetPlayers()) do
+            if plr ~= beast and plr.Character then
+                local torso = plr.Character:FindFirstChild("Torso") or plr.Character:FindFirstChild("UpperTorso")
+                local hrp = plr.Character:FindFirstChild("HumanoidRootPart")
+                if torso and hrp then
+                    hammerEvent:FireServer("HammerTieUp", torso, hrp.Position)
+                    print(plr.Name.." has down")
+                end
+            end
+        end
+    end,
+})
 ta:CreateToggle({
     Name = "Give Auto Rope",
     CurrentValue = false,
@@ -854,7 +888,7 @@ ta:CreateToggle({
     end,
 })
 
-ta:CreateSection("Remote Abuse - Debuffs")
+ta:CreateSection("Remote Abuse")
 --slowmo best
 ta:CreateToggle({
     Name = "Slow beast",
@@ -1493,6 +1527,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
