@@ -1181,8 +1181,22 @@ local function getAvailableTrigger(computer)
     return nil
 end
 -- tp pc
+local function smoothTeleport(rootPart, targetCFrame, duration)
+    local steps = 10 -- mais steps = mais suave
+    local interval = duration / steps
+    local startPos = rootPart.CFrame.Position
+    local endPos = targetCFrame.Position
+
+    for i = 1, steps do
+        local alpha = i / steps
+        local newPos = startPos:Lerp(endPos, alpha)
+        rootPart.CFrame = CFrame.new(newPos)
+        task.wait(interval)
+    end
+end
+
 t4:CreateButton({
-    Name = "Teleport to PC [Safe]",
+    Name = "Teleport to PC [Safe Tween]",
     Callback = function()
         local rootPart = getCurrentRootPart()
         local chosenComputer = getRandomComputer()
@@ -1199,43 +1213,18 @@ t4:CreateButton({
                 elseif (r == 13 and g == 105 and b == 172) then
                     local trigger = getAvailableTrigger(chosenComputer)
                     if trigger then
-                        local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-                        if humanoid then
-                            local offset = Vector3.new(
-                                math.random(-1, 1),
-                                0,
-                                math.random(-1, 1)
-                            )
-                            local targetPos = trigger.Position + Vector3.new(0, 3, 0) + offset
-                            humanoid:MoveTo(targetPos)
-                            humanoid.MoveToFinished:Wait(2)
+                        local targetCFrame = trigger.CFrame + Vector3.new(0, 3, 0)
 
-                            table.insert(recentComputers, chosenComputer)
-                            if #recentComputers > 3 then
-                                table.remove(recentComputers, 1)
-                            end
-                            return
+                        -- faz “tween manual” em micro passos
+                        smoothTeleport(rootPart, targetCFrame, 1.5)
+
+                        table.insert(recentComputers, chosenComputer)
+                        if #recentComputers > 3 then
+                            table.remove(recentComputers, 1)
                         end
+                        return
                     else
-                        print("All triggers busy, trying another PC...")
-                        local another = getRandomComputer()
-                        if another and another ~= chosenComputer then
-                            local trigger2 = getAvailableTrigger(another)
-                            if trigger2 then
-                                local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-                                if humanoid then
-                                    local targetPos = trigger2.Position + Vector3.new(0, 3, 0)
-                                    humanoid:MoveTo(targetPos)
-                                    humanoid.MoveToFinished:Wait(2)
-
-                                    table.insert(recentComputers, another)
-                                    if #recentComputers > 3 then
-                                        table.remove(recentComputers, 1)
-                                    end
-                                    return
-                                end
-                            end
-                        end
+                        print("All triggers busy, PC ignored")
                     end
                 else
                     print("Invalid color ("..r..","..g..","..b..")")
@@ -1252,6 +1241,7 @@ t4:CreateButton({
         })
     end,
 })
+
 -- end
 t4:CreateButton({
    Name = "Teleport to exit doors",
@@ -1309,6 +1299,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
