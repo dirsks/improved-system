@@ -1182,7 +1182,7 @@ local function getAvailableTrigger(computer)
 end
 -- tp pc
 local function smoothTeleport(rootPart, targetCFrame, duration)
-    local steps = 10 -- mais steps = mais suave
+    local steps = 30 -- mais steps = mais suave
     local interval = duration / steps
     local startPos = rootPart.CFrame.Position
     local endPos = targetCFrame.Position
@@ -1299,6 +1299,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
