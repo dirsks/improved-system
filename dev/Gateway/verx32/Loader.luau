@@ -731,8 +731,53 @@ t4:CreateToggle({
 })
 
 ta:CreateDivider()
--- give hit
+-- down everyoc
 local plyers = game:GetService("Players")
+local HENTAI = false
+local JOT = math.huge
+
+local function GetClis(maxDist)
+    local beast = getBeast()
+    if not beast or not beast.Character or not beast.Character:FindFirstChild("HumanoidRootPart") then return nil end
+
+    local beastPos = beast.Character.HumanoidRootPart.Position
+    local closest, closestDist
+
+    for _, plr in pairs(plyers:GetPlayers()) do
+        if plr ~= beast and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+            local dist = (plr.Character.HumanoidRootPart.Position - beastPos).Magnitude
+            if dist <= maxDist and (not closestDist or dist < closestDist) then
+                closest = plr
+                closestDist = dist
+            end
+        end
+    end
+
+    return closest
+end
+
+task.spawn(function()
+    while true do
+        if HENTAI then
+            local beast = getBeast()
+            if beast and beast.Character then
+                local hammer = beast.Character:FindFirstChild("Hammer")
+                local hammerEvent = hammer and hammer:FindFirstChild("HammerEvent")
+                local victim = getClosestVictimToBeast(FORCE_HIT_DISTANCE)
+
+                if hammerEvent and victim and victim.Character then
+                    local torso = victim.Character:FindFirstChild("Torso") or victim.Character:FindFirstChild("UpperTorso")
+                    if torso then
+                        hammerEvent:FireServer("HammerHit", torso)
+                        print("Beast hit used on "..victim.Name)
+                    end
+                end
+            end
+        end
+        task.wait(0.1)
+    end
+end)
+-- give hit
 local forceBeastHitEnabled = false
 local FORCE_HIT_DISTANCE = 16
 
@@ -831,32 +876,12 @@ task.spawn(function()
 end)
 
 ta:CreateSection("Remote Abuse - Troll")
-ta:CreateButton({
-    Name = "Force Hit All",
-    Callback = function()
-        local beast = getBeast()
-        if not beast or not beast.Character then
-            print("[ForceHitAll] Nenhuma besta encontrada.")
-            return
-        end
-
-        local hammer = beast.Character:FindFirstChild("Hammer")
-        local hammerEvent = hammer and hammer:FindFirstChild("HammerEvent")
-        if not hammerEvent then
-            print("[ForceHitAll] HammerEvent não encontrado.")
-            return
-        end
-
-        print("[ForceHitAll] Forçando HIT em todos os jogadores...")
-        for _, target in pairs(game.Players:GetChildren()) do
-            if target ~= beast and target.Character then
-                local torso = target.Character:FindFirstChild("Torso") or target.Character:FindFirstChild("UpperTorso")
-                if torso then
-                    hammerEvent:FireServer("HammerHit", torso)
-                    print("[ForceHitAll] Beast hit usado em "..target.Name)
-                end
-            end
-        end
+ta:CreateToggle({
+    Name = "Hit Everyone",
+    CurrentValue = false,
+    Flag = "ToggleAutoRopeBeast",
+    Callback = function(Value)
+        HENTAI = Value
     end,
 })
 ta:CreateToggle({
@@ -1521,6 +1546,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
