@@ -1235,7 +1235,7 @@ local function getAvailableTrigger(computer)
 end
 -- tp pc
 local function smoothTeleport(rootPart, targetCFrame, duration)
-    local steps = 180 -- mais steps = mais suave
+    local steps = 500 -- mais steps = mais suave
     local interval = duration / steps
     local startPos = rootPart.CFrame.Position
     local endPos = targetCFrame.Position
@@ -1274,7 +1274,7 @@ ta:CreateButton({
         if #bluePCs == 0 then
             Rayfield:Notify({
                 Title = "TP to PC",
-                Content = "done",
+                Content = "No PCs avaible",
                 Duration = 1.5,
                 Image = "check",
             })
@@ -1546,6 +1546,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
