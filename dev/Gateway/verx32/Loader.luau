@@ -1084,8 +1084,8 @@ t4:CreateToggle({
 })
 
 --
-t4:CreateSection("Teleports")
-t4:CreateButton({
+ta:CreateSection("Teleports")
+ta:CreateButton({
    Name = "Teleport to map [⚠]",
    Callback = function()
         local function findOBSpawnPadInParent()
@@ -1196,8 +1196,8 @@ local function smoothTeleport(rootPart, targetCFrame, duration)
 end
 
 -- ⚡ Botão para teleportar apenas em PCs azuis
-t4:CreateButton({
-    Name = "Teleport to PC [Blue only]",
+ta:CreateButton({
+    Name = "Teleport to PC [?]",
     Callback = function()
         local rootPart = getCurrentRootPart()
         if not rootPart then return end
@@ -1253,7 +1253,7 @@ t4:CreateButton({
     end,
 })
 -- end
-t4:CreateButton({
+ta:CreateButton({
    Name = "Teleport to exit doors [?]",
    Callback = function()
         local exitDoorModels = findAllModelsByName(game.Workspace, "ExitDoor")
@@ -1269,6 +1269,148 @@ t4:CreateButton({
         end
    end,
 })
+--
+ta:CreateSection("Auto Farm - BETA")
+-- ================= AUTO FARM =================
+local autoFarmEnabled = false
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local function allPlayersCaptured()
+    for _, plr in pairs(Players:GetPlayers()) do
+        if plr ~= LocalPlayer and plr:FindFirstChild("TempPlayerStatsModule") then
+            local captured = plr.TempPlayerStatsModule:FindFirstChild("Captured")
+            if captured and captured.Value == false then
+                return false
+            end
+        end
+    end
+    return true
+end
+
+local function getBluePC()
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj.Name == "ComputerTable" and obj:IsA("Model") then
+            local screen = obj:FindFirstChild("Screen")
+            if screen and screen:IsA("BasePart") then
+                local color = screen.Color
+                local r,g,b = math.floor(color.R*255), math.floor(color.G*255), math.floor(color.B*255)
+                if r==13 and g==105 and b==172 then
+                    return obj
+                end
+            end
+        end
+    end
+    return nil
+end
+
+local function getRandomExit()
+    local exits = {}
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj.Name == "ExitDoor" and obj:IsA("Model") then
+            table.insert(exits, obj)
+        end
+    end
+    if #exits > 0 then
+        return exits[math.random(1, #exits)]
+    end
+    return nil
+end
+
+local function getFreezePod()
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj.Name == "FreezePod" and obj:IsA("Model") then
+            return obj
+        end
+    end
+    return nil
+end
+
+t4:CreateToggle({
+    Name = "Auto Farm",
+    CurrentValue = false,
+    Flag = "ToggleAutoFarm",
+    Callback = function(Value)
+        autoFarmEnabled = Value
+        if Value then
+            task.spawn(function()
+                while autoFarmEnabled do
+                    local stats = LocalPlayer:FindFirstChild("TempPlayerStatsModule")
+                    if not stats then break end
+                    local isBeast = stats:FindFirstChild("IsBeast") and stats.IsBeast.Value
+
+                    if not isBeast then
+                        -- ================= SURVIVOR =================
+                        _G.InputActionEnabled = true -- Auto Interact
+                        _G.AutomaticHackingEnabled = true -- Anti Pc Error
+
+                        local rootPart = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                        if rootPart then
+                            local pc = getBluePC()
+                            if pc then
+                                local trigger = pc:FindFirstChild("ComputerTrigger1")
+                                if trigger then
+                                    rootPart.CFrame = trigger.CFrame + Vector3.new(0,3,0)
+                                end
+                            else
+                                local exit = getRandomExit()
+                                if exit then
+                                    rootPart.CFrame = exit:GetPivot() * CFrame.new(0,0,-5)
+                                end
+                            end
+                        end
+
+                    else
+                        -- ================= BEAST =================
+                        local carried = LocalPlayer:FindFirstChild("CarriedTorso")
+                        if carried and carried.Value ~= nil then
+                            repeat task.wait(0.5) until carried.Value == nil or not autoFarmEnabled
+                        end
+
+                        for _, plr in pairs(Players:GetPlayers()) do
+                            if plr ~= LocalPlayer and plr.Character and not (plr.TempPlayerStatsModule.Captured.Value) then
+                                local rootPart = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                                local targetRoot = plr.Character:FindFirstChild("HumanoidRootPart")
+                                if rootPart and targetRoot then
+                                    rootPart.CFrame = targetRoot.CFrame + Vector3.new(0,0,2)
+                                    task.wait(0.3)
+                                end
+
+                                -- Auto Hit / Auto Rope
+                                forceBeastHitEnabled = true
+                                autoRopeEnabled = true
+
+                                task.wait(0.7)
+
+                                -- levar pro pod
+                                local pod = getFreezePod()
+                                if pod and rootPart then
+                                    rootPart.CFrame = pod:GetPivot() + Vector3.new(0,3,0)
+                                end
+
+                                _G.InputActionEnabled = true -- Auto Interact para prender
+                                task.wait(1)
+                            end
+                        end
+                    end
+
+                    if allPlayersCaptured() then
+                        autoFarmEnabled = false
+                        Rayfield:Notify({
+                            Title = "Auto Farm",
+                            Content = "✅ Todos foram capturados!",
+                            Duration = 3,
+                            Image = 4483362458,
+                        })
+                        break
+                    end
+                    task.wait(1)
+                end
+            end)
+        end
+    end,
+})
+--
 t5:CreateSection("Other")
 t5:CreateButton({
    Name = "Spectate Players (Tab to toggle)",
@@ -1309,6 +1451,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
