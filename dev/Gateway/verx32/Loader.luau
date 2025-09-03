@@ -409,7 +409,6 @@ t3:CreateToggle({
     end,
 })
 
---[[ ESP PCs
 t3:CreateToggle({
     Name = "ESP PCs",
     CurrentValue = false,
@@ -432,91 +431,7 @@ t3:CreateToggle({
             removeESP("ComputerTable")
         end
     end,
-})]]
--- ESP PCs
-local computers = {}
-local function setupComputer(pc)
-    if not pc:IsA("Model") then return end
-    if computers[pc] then return end
-
-    local screen = pc:FindFirstChild("Screen")
-    if not screen or not screen:IsA("BasePart") then return end
-
-    -- cria highlight 1 vez
-    local highlight = Instance.new("Highlight")
-    highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-    highlight.Parent = pc
-
-    local function updateColor()
-        local color = screen.Color
-        local r,g,b = math.floor(color.R*255), math.floor(color.G*255), math.floor(color.B*255)
-
-        if r==13 and g==105 and b==172 then
-            highlight.FillColor = Color3.fromRGB(85,170,255)
-            highlight.OutlineColor = Color3.fromRGB(66,132,197)
-        else
-            highlight.FillColor = color
-            highlight.OutlineColor = Color3.new(
-                math.clamp(color.R + 0.3, 0, 1),
-                math.clamp(color.G + 0.3, 0, 1),
-                math.clamp(color.B + 0.3, 0, 1)
-            )
-        end
-    end
-
-    -- atualiza agora e quando a cor mudar
-    updateColor()
-    screen:GetPropertyChangedSignal("Color"):Connect(updateColor)
-
-    computers[pc] = highlight
-end
-
-local function removeComputer(pc)
-    if computers[pc] then
-        computers[pc]:Destroy()
-        computers[pc] = nil
-    end
-end
-
--- inicializa já existentes
-for _, obj in pairs(workspace:GetDescendants()) do
-    if obj.Name == "ComputerTable" then
-        setupComputer(obj)
-    end
-end
-
-workspace.DescendantAdded:Connect(function(obj)
-    if obj.Name == "ComputerTable" then
-        setupComputer(obj)
-    end
-end)
-
-workspace.DescendantRemoving:Connect(function(obj)
-    if obj.Name == "ComputerTable" then
-        removeComputer(obj)
-    end
-end)
-
--- Toggle ESP PCs
-t3:CreateToggle({
-    Name = "ESP PCs",
-    CurrentValue = false,
-    Flag = "TogglePCsESP",
-    Callback = function(Value)
-        if Value then
-            -- habilita highlights existentes
-            for pc, hl in pairs(computers) do
-                hl.Enabled = true
-            end
-        else
-            -- desliga highlights sem destruir
-            for pc, hl in pairs(computers) do
-                hl.Enabled = false
-            end
-        end
-    end,
 })
-
 
 -- Basic Hacks buttons
 local noclip = false
@@ -734,7 +649,7 @@ ta:CreateDivider()
 -- down everyoc
 local plyers = game:GetService("Players")
 local HENTAI = false
-local JOT = 200
+local JOT = 60
 
 local function GetClis(maxDist)
     local beast = getBeast()
@@ -1165,10 +1080,10 @@ ta:CreateButton({
             end
         else
             Rayfield:Notify({
-                Title = "TP To Map",
-                Content = "OBSpawnPad not found.",
+                Title = "Teleport to map",
+                Content = "Spawns not found",
                 Duration = 1.5,
-                Image = "error",
+                Image = "funnel-x",
             })
         end
    end,
@@ -1235,7 +1150,7 @@ local function getAvailableTrigger(computer)
 end
 -- tp pc
 local function smoothTeleport(rootPart, targetCFrame, duration)
-    local steps = 500 -- mais steps = mais suave
+    local steps = 260 -- mais steps = mais suave
     local interval = duration / steps
     local startPos = rootPart.CFrame.Position
     local endPos = targetCFrame.Position
@@ -1276,7 +1191,7 @@ ta:CreateButton({
                 Title = "TP to PC",
                 Content = "No PCs avaible",
                 Duration = 1.5,
-                Image = "check",
+                Image = "X",
             })
             return
         end
@@ -1300,7 +1215,7 @@ ta:CreateButton({
                 Title = "TP to PC",
                 Content = "All triggers busy!",
                 Duration = 1.5,
-                Image = "error",
+                Image = "funnel-x",
             })
         end
     end,
@@ -1323,7 +1238,7 @@ ta:CreateButton({
    end,
 })
 --
-ta:CreateSection("Auto Farm - BETA")
+ta:CreateSection("Auto Farm | Credit: luna")
 -- ================= AUTO FARM =================
 local autoFarmEnabled = false
 local Players = game:GetService("Players")
@@ -1402,7 +1317,12 @@ ta:CreateToggle({
         if Value then
             resetUsedPCs()
             task.spawn(function()
-                print("[AutoFarm] iniciado.")
+                Rayfield:Notify({
+                    Title = "Auto Farm",
+                    Content = "Initiated 🟩",
+                    Duration = 1.4,
+                    Image = "calendar-sync",
+                })
                 while autoFarmEnabled do
                     local stats = LocalPlayer:FindFirstChild("TempPlayerStatsModule")
                     if not stats then break end
@@ -1412,7 +1332,7 @@ ta:CreateToggle({
                         -- ================= SURVIVOR =================
                         _G.InputActionEnabled = true -- Auto Interact
                         _G.AutomaticHackingEnabled = true -- Anti PC Error
-                        print("[AutoFarm] Jogador é sobrevivente.")
+                        print("[AutoFarm] Player is survivor")
 
                         local rootPart = getCurrentRootPart()
                         if rootPart then
@@ -1421,13 +1341,13 @@ ta:CreateToggle({
                                 local chosenPC = bluePCs[math.random(1, #bluePCs)]
                                 local trigger = getAvailableTrigger(chosenPC)
                                 if trigger then
-                                    print("[AutoFarm] Indo para PC azul...")
+                                    print("[AutoFarm] Going forward")
                                     smoothTeleport(rootPart, trigger.CFrame + Vector3.new(0,3,0), 1.5)
 
                                     -- esperar tela mudar pra verde
                                     local screen = chosenPC:FindFirstChild("Screen")
                                     if screen then
-                                        print("[AutoFarm] Hackeando PC...")
+                                        print("[AutoFarm] Hacking PC...")
                                         repeat
                                             task.wait(1)
                                             local color = screen.Color
@@ -1443,7 +1363,7 @@ ta:CreateToggle({
                             else
                                 local exit = getRandomExit()
                                 if exit then
-                                    print("[AutoFarm] Nenhum PC azul restante, indo para ExitDoor...")
+                                    print("[AutoFarm] no avaible pcs, going to exit door")
                                     local pivot = exit:GetPivot()
                                     rootPart.CFrame = pivot * CFrame.new(0,0,-5)
                                 end
@@ -1452,10 +1372,10 @@ ta:CreateToggle({
 
                     else
                         -- ================= BEAST =================
-                        print("[AutoFarm] Jogador é a Besta.")
+                        print("[AutoFarm] Player is beast.")
                         local carried = LocalPlayer:FindFirstChild("CarriedTorso")
                         if carried and carried.Value ~= nil then
-                            print("[AutoFarm] Já está carregando alguém, aguardando soltar...")
+                            print("[AutoFarm] Already carrying")
                             repeat task.wait(0.5) until carried.Value == nil or not autoFarmEnabled
                         end
 
@@ -1466,7 +1386,7 @@ ta:CreateToggle({
                                     local rootPart = getCurrentRootPart()
                                     local targetRoot = plr.Character:FindFirstChild("HumanoidRootPart")
                                     if rootPart and targetRoot then
-                                        print("[AutoFarm] Indo até "..plr.Name)
+                                        print("[AutoFarm] going to "..plr.Name)
                                         rootPart.CFrame = targetRoot.CFrame + Vector3.new(0,0,2)
                                         task.wait(0.3)
                                     end
@@ -1474,14 +1394,12 @@ ta:CreateToggle({
                                     -- Auto Hit / Auto Rope
                                     forceBeastHitEnabled = true
                                     autoRopeEnabled = true
-                                    print("[AutoFarm] Atacando "..plr.Name)
 
                                     task.wait(0.7)
 
                                     -- levar para o pod
                                     local pod = getFreezePod()
                                     if pod and rootPart then
-                                        print("[AutoFarm] Levando "..plr.Name.." para o FreezePod")
                                         rootPart.CFrame = pod:GetPivot() + Vector3.new(0,3,0)
                                     end
 
@@ -1494,14 +1412,24 @@ ta:CreateToggle({
 
                     if allPlayersCaptured() then
                         autoFarmEnabled = false
-                        print("[AutoFarm] ✅ Todos foram capturados! Encerrando loop.")
+                        Rayfield:Notify({
+                            Title = "Auto Farm",
+                            Content = "Everyone is captured 🟩",
+                            Duration = 1.4,
+                            Image = "bomb",
+                        })
                         break
                     end
                     task.wait(1)
                 end
             end)
         else
-            print("[AutoFarm] parado.")
+            Rayfield:Notify({
+                Title = "Auto Farm",
+                Content = "Stopped 🟥",
+                Duration = 1.4,
+                Image = "circle-pause",
+            })
         end
     end,
 })
@@ -1546,6 +1474,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
