@@ -831,35 +831,29 @@ task.spawn(function()
 end)
 
 ta:CreateSection("Remote Abuse - Troll")
-t4:CreateButton({
-    Name = "Hit down everyone",
+ta:CreateButton({
+    Name = "Force Hit All",
     Callback = function()
         local beast = getBeast()
         if not beast or not beast.Character then
-            print("Round isnt set")
+            print("[ForceHitAll] Nenhuma besta encontrada.")
             return
         end
 
         local hammer = beast.Character:FindFirstChild("Hammer")
-        if not hammer then
-            print("Beast doesnt have a hammer")
-            return
-        end
-
-        local hammerEvent = hammer:FindFirstChild("HammerEvent")
+        local hammerEvent = hammer and hammer:FindFirstChild("HammerEvent")
         if not hammerEvent then
-            print("No beast found")
+            print("[ForceHitAll] HammerEvent não encontrado.")
             return
         end
 
-        print("Hitting everyone")
-        for _, plr in pairs(game.Players:GetPlayers()) do
-            if plr ~= beast and plr.Character then
-                local torso = plr.Character:FindFirstChild("Torso") or plr.Character:FindFirstChild("UpperTorso")
-                local hrp = plr.Character:FindFirstChild("HumanoidRootPart")
-                if torso and hrp then
-                    hammerEvent:FireServer("HammerTieUp", torso, hrp.Position)
-                    print(plr.Name.." has down")
+        print("[ForceHitAll] Forçando HIT em todos os jogadores...")
+        for _, target in pairs(Players:GetPlayers()) do
+            if target ~= beast and target.Character then
+                local torso = target.Character:FindFirstChild("Torso") or target.Character:FindFirstChild("UpperTorso")
+                if torso then
+                    hammerEvent:FireServer("HammerHit", torso)
+                    print("[ForceHitAll] Beast hit usado em "..target.Name)
                 end
             end
         end
@@ -1374,7 +1368,7 @@ local function getFreezePod()
     return nil
 end
 
-t4:CreateToggle({
+ta:CreateToggle({
     Name = "Auto Farm",
     CurrentValue = false,
     Flag = "ToggleAutoFarm",
@@ -1527,6 +1521,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
