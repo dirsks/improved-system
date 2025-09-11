@@ -726,7 +726,7 @@ ta:CreateSection("Survivor - NEW")
     end,
 })]]
 -- Toggle principal
-local AutoInteractToggle = Tab:CreateToggle({
+local AutoInteractToggle = ta:CreateToggle({
     Name = "Auto Interact",
     CurrentValue = false,
     Flag = "Toggle_AutoInteract",
@@ -769,7 +769,7 @@ local AutoInteractToggle = Tab:CreateToggle({
 })
 
 -- Dropdown para escolher instâncias
-local CustomInteraction = Tab:CreateDropdown({
+local CustomInteraction = ta:CreateDropdown({
     Name = "OPTIONAL: Choose a Trigger to interact",
     Options = {
         "DoorTrigger",
@@ -1618,6 +1618,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
