@@ -702,7 +702,9 @@ t4:CreateButton({
         end
     end,
 })
-t4:CreateToggle({
+ta:CreateSection("Survivor - NEW")
+-- interact
+--[[ta:CreateToggle({
     Name = "Auto Interact",
     CurrentValue = false,
     Flag = "ToggleInputAction",
@@ -722,9 +724,72 @@ t4:CreateToggle({
             end)
         end
     end,
+})]]
+-- Toggle principal
+local AutoInteractToggle = Tab:CreateToggle({
+    Name = "Auto Interact",
+    CurrentValue = false,
+    Flag = "Toggle_AutoInteract",
+    Callback = function(Value)
+        _G.AutoInteractEnabled = Value
+        if Value then
+            task.spawn(function()
+                while _G.AutoInteractEnabled do
+                    local instances = {}
+
+                    -- Se nada for selecionado, adiciona todas as opções
+                    if #(_G.SelectedInstances or {}) == 0 then
+                        instances = {
+                            "DoorTrigger",
+                            "ExitDoorTrigger",
+                            "PodTrigger",
+                            "ComputerTrigger1",
+                            "ComputerTrigger2",
+                            "ComputerTrigger3",
+                        }
+                    else
+                        instances = _G.SelectedInstances
+                    end
+
+                    -- Dispara evento em cada instância selecionada
+                    for _, instanceName in ipairs(instances) do
+                        local args = {
+                            "Input",
+                            instanceName,
+                            true
+                        }
+                        game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+                    end
+
+                    task.wait()
+                end
+            end)
+        end
+    end,
 })
 
-ta:CreateDivider()
+-- Dropdown para escolher instâncias
+local CustomInteraction = Tab:CreateDropdown({
+    Name = "OPTIONAL: Choose a Trigger to interact",
+    Options = {
+        "DoorTrigger",
+        "ExitDoorTrigger",
+        "PodTrigger",
+        "ComputerTrigger1",
+        "ComputerTrigger2",
+        "ComputerTrigger3",
+    },
+    CurrentOption = {},
+    MultipleOptions = true,
+    Flag = "Dropdown_AutoInteract",
+    Callback = function(Options)
+        -- Salva opções escolhidas em uma variável global
+        _G.SelectedInstances = Options
+    end,
+})
+
+-- Inicializa vazio
+_G.SelectedInstances = {}
 -- down everyoc
 local plyers = game:GetService("Players")
 local HENTAI = false
@@ -1553,6 +1618,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
