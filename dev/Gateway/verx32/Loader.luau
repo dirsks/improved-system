@@ -83,7 +83,7 @@ print("Loaded: " .. script.Name .. " succeful. 💎 Join Dodo Hub to support us!
 print("gateway ID: " .. game.PlaceVersion)
 
 local Window = Rayfield:CreateWindow({
-   Name = "SIMON "..eventEmoji.." ["..info.Name.."]",
+   Name = "Dodo Development "..eventEmoji.." ["..info.Name.."]",
    Icon = 126271437555657,
    LoadingTitle = ">Loading...",
    LoadingSubtitle = GetRandomTip(),
@@ -215,6 +215,28 @@ t6:CreateDropdown({
             _G.CustomTheme = chosenTheme
             Rayfield:SetTheme(chosenTheme)
             CurrentTheme = chosenTheme
+        end
+   end,
+})
+ta:CreateLabel("TIP: Configurations not loading? Click Reset Data to reset your configurations.", 95107582760295, Color3.fromRGB(30, 35, 40), true) -- Title, Icon, Color, IgnoreThems
+t6:CreateButton({
+   Name = "Reset Data",
+   Callback = function()
+        if isfile("Dirsblox/FTF_Config.rfld") then
+            delfile("Dirsblox/FTF_Config.rfld")
+            Rayfield:Notify({
+                Title = "System Notification",
+                Content = "Data has been resetted sucefully",
+                Duration = 1.5,
+                Image = 132834248211414,
+            })
+        else
+            Rayfield:Notify({
+                Title = "System Notification",
+                Content = "No data is avaible/configurations data is clear or nil.",
+                Duration = 1.5,
+                Image = 132834248211414,
+            })
         end
    end,
 })
@@ -725,7 +747,37 @@ ta:CreateSection("Survivor - NEW")
         end
     end,
 })]]
--- Toggle principal
+--
+-- Lista de triggers do jogo
+local TriggerNames = {
+    "DoorTrigger",
+    "ExitDoorTrigger",
+    "PodTrigger",
+    "ComputerTrigger1",
+    "ComputerTrigger2",
+    "ComputerTrigger3",
+}
+
+-- Armazena triggers que o player está tocando
+local ActiveTouches = {}
+
+-- Dropdown
+_G.SelectedInstances = {}
+
+-- Função para verificar se o trigger está permitido
+local function IsTriggerAllowed(triggerName)
+    if #(_G.SelectedInstances or {}) == 0 then
+        return true -- Se nada for escolhido, libera todos
+    end
+    for _, v in ipairs(_G.SelectedInstances) do
+        if v == triggerName then
+            return true
+        end
+    end
+    return false
+end
+
+-- Toggle Auto Interact
 ta:CreateToggle({
     Name = "Auto Interact",
     CurrentValue = false,
@@ -735,61 +787,68 @@ ta:CreateToggle({
         if Value then
             task.spawn(function()
                 while _G.AutoInteractEnabled do
-                    local instances = {}
+                    local didInteract = false
 
-                    -- Se nada for selecionado, adiciona todas as opções
-                    if #(_G.SelectedInstances or {}) == 0 then
-                        instances = {
-                            "DoorTrigger",
-                            "ExitDoorTrigger",
-                            "PodTrigger",
-                            "ComputerTrigger1",
-                            "ComputerTrigger2",
-                            "ComputerTrigger3",
-                        }
-                    else
-                        instances = _G.SelectedInstances
+                    for trigger, _ in pairs(ActiveTouches) do
+                        if IsTriggerAllowed(trigger.Name) then
+                            local args = {
+                                "Input",
+                                trigger.Name,
+                                true
+                            }
+                            game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+                            didInteract = true
+                        end
                     end
 
-                    -- Dispara evento em cada instância selecionada
-                    for _, instanceName in ipairs(instances) do
-                        local args = {
-                            "Input",
-                            instanceName,
-                            true
-                        }
-                        game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+                    if not didInteract then
+                        task.wait() -- player não está em trigger, espera seguro
                     end
-
-                    task.wait()
                 end
             end)
         end
     end,
 })
 
--- Dropdown para escolher instâncias
 ta:CreateDropdown({
-    Name = "OPTIONAL: Choose a Trigger to interact",
-    Options = {
-        "DoorTrigger",
-        "ExitDoorTrigger",
-        "PodTrigger",
-        "ComputerTrigger1",
-        "ComputerTrigger2",
-        "ComputerTrigger3",
-    },
+    Name = "Choose a Trigger",
+    Options = TriggerNames,
     CurrentOption = {},
     MultipleOptions = true,
     Flag = "Dropdown_AutoInteract",
     Callback = function(Options)
-        -- Salva opções escolhidas em uma variável global
         _G.SelectedInstances = Options
     end,
 })
 
--- Inicializa vazio
-_G.SelectedInstances = {}
+-- Detectar quando o player encosta nos triggers
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local function SetupTrigger(trigger)
+    if trigger:IsA("BasePart") then
+        trigger.Touched:Connect(function(hit)
+            if hit.Parent == LocalPlayer.Character then
+                ActiveTouches[trigger] = true
+            end
+        end)
+
+        trigger.TouchEnded:Connect(function(hit)
+            if hit.Parent == LocalPlayer.Character then
+                ActiveTouches[trigger] = nil
+            end
+        end)
+    end
+end
+
+-- Configurar triggers existentes
+for _, name in ipairs(TriggerNames) do
+    local obj = workspace:FindFirstChild(name, true) -- busca em descendentes
+    if obj then
+        SetupTrigger(obj)
+    end
+end
+--
 -- down everyoc
 local plyers = game:GetService("Players")
 local HENTAI = false
@@ -1618,6 +1677,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
