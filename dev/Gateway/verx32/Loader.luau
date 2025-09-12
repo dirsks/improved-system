@@ -363,7 +363,6 @@ local function onMapChanged()
         removeESP("ExitDoor")
     end
 end
-CurrentMap.Changed:Connect(onMapChanged)
 game.Players.PlayerAdded:Connect(function(plr)
     plr.CharacterAdded:Connect(updatePlayerESP)
 end)
@@ -443,7 +442,18 @@ t3:CreateToggle({
     Flag = "ToggleExitDoorsESP",
     Callback = function(Value)
         _G.ESP_EXITS = Value
-        onMapChanged()
+        if Value then
+            task.spawn(function()
+                while _G.ESP_EXITS do
+                    if CurrentMap.Value then
+                        onMapChanged()
+                    end
+                    task.wait(1)
+                end
+            end)
+        else
+            removeESP("ExitDoor")
+        end
     end,
 })
 
@@ -1657,6 +1667,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
