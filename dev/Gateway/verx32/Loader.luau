@@ -314,26 +314,56 @@ local function updatePlayerESP()
     end
 end
 -- do not change this bc it fucks the code
--- apply and remove Esp
-local function applyESP(objectName, fillColor, outlineColor)
-    for _, obj in pairs(workspace:GetDescendants()) do
-        if obj.Name == objectName and not obj:FindFirstChild("Highlight") then
-            local a = Instance.new("Highlight", obj)
-            a.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-            a.FillColor = fillColor
-            a.OutlineColor = outlineColor
+-- apply and remove Esp updated
+local RS = game:GetService("ReplicatedStorage")
+local CurrentMap = RS:WaitForChild("CurrentMap")
+
+local function createESP(obj, fillColor, outlineColor)
+    if not obj:FindFirstChild("ESP_Highlight") then
+        local h = Instance.new("Highlight")
+        h.Name = "ESP_Highlight"
+        h.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+        h.FillColor = fillColor
+        h.OutlineColor = outlineColor
+        h.Parent = obj
+    end
+end
+
+local function applyESP(objName, fillColor, outlineColor)
+    if CurrentMap.Value then
+        for _, obj in pairs(CurrentMap.Value:GetDescendants()) do
+            if obj.Name == objName then
+                createESP(obj, fillColor, outlineColor)
+            end
         end
     end
 end
--- ESP Fixed by luna
-local function removeESP(objectName)
-    for _, obj in pairs(workspace:GetDescendants()) do
-        if obj.Name == objectName then
-            local h = obj:FindFirstChild("Highlight")
-            if h then h:Destroy() end
+
+local function removeESP(objName)
+    if CurrentMap.Value then
+        for _, obj in pairs(CurrentMap.Value:GetDescendants()) do
+            if obj.Name == objName then
+                local h = obj:FindFirstChild("ESP_Highlight")
+                if h then h:Destroy() end
+            end
         end
     end
 end
+
+local function onMapChanged()
+    if _G.ESP_PODS then
+        applyESP("FreezePod", Color3.fromRGB(0,255,255), Color3.fromRGB(127,255,255))
+    else
+        removeESP("FreezePod")
+    end
+
+    if _G.ESP_EXITS then
+        applyESP("ExitDoor", Color3.fromRGB(255,255,0), Color3.fromRGB(255,127,127))
+    else
+        removeESP("ExitDoor")
+    end
+end
+CurrentMap.Changed:Connect(onMapChanged)
 game.Players.PlayerAdded:Connect(function(plr)
     plr.CharacterAdded:Connect(updatePlayerESP)
 end)
@@ -384,52 +414,25 @@ t3:CreateToggle({
 })
 
 -- ESP Pods
+
+-- Toggles
 t3:CreateToggle({
     Name = "ESP Pod",
     CurrentValue = false,
     Flag = "TogglePodsESP",
     Callback = function(Value)
         _G.ESP_PODS = Value
-        if Value then
-            task.spawn(function()
-                while _G.ESP_PODS do
-                    if game.ReplicatedStorage.CurrentMap.Value then
-                        applyESP("FreezePod", Color3.fromRGB(0,255,255), Color3.fromRGB(127,255,255))
-                    else
-                        removeESP("FreezePod")
-                    end
-                    task.wait(1)
-                end
-                removeESP("FreezePod")
-            end)
-        else
-            removeESP("FreezePod")
-        end
+        onMapChanged()
     end,
 })
 
--- ESP Exit Doors
 t3:CreateToggle({
     Name = "ESP Exit Doors",
     CurrentValue = false,
     Flag = "ToggleExitDoorsESP",
     Callback = function(Value)
         _G.ESP_EXITS = Value
-        if Value then
-            task.spawn(function()
-                while _G.ESP_EXITS do
-                    if game.ReplicatedStorage.CurrentMap.Value then
-                        applyESP("ExitDoor", Color3.fromRGB(255,255,0), Color3.fromRGB(255,127,127))
-                    else
-                        removeESP("ExitDoor")
-                    end
-                    task.wait(1)
-                end
-                removeESP("ExitDoor")
-            end)
-        else
-            removeESP("ExitDoor")
-        end
+        onMapChanged()
     end,
 })
 
@@ -760,10 +763,8 @@ local TriggerNames = {
     "ComputerTrigger3",
 }
 
--- Armazena triggers que o player está tocando
+-- Tabelas globais
 local ActiveTouches = {}
-
--- Dropdown
 _G.SelectedInstances = {}
 
 -- Função para verificar se o trigger está permitido
@@ -790,21 +791,19 @@ ta:CreateToggle({
             task.spawn(function()
                 while _G.AutoInteractEnabled do
                     local didInteract = false
-
                     for trigger, _ in pairs(ActiveTouches) do
                         if IsTriggerAllowed(trigger.Name) then
                             local args = {
-                                "Input",
-                                trigger.Name,
-                                true
+                                "Input",        -- string literal
+                                "Action",       -- string literal
+                                true            -- boolean
                             }
                             game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
                             didInteract = true
                         end
                     end
-
                     if not didInteract then
-                        task.wait() -- player não está em trigger, espera seguro
+                        task.wait() -- espera seguro se não estiver em nenhum trigger
                     end
                 end
             end)
@@ -812,6 +811,7 @@ ta:CreateToggle({
     end,
 })
 
+-- Dropdown para selecionar triggers
 ta:CreateDropdown({
     Name = "Choose a Trigger",
     Options = TriggerNames,
@@ -823,7 +823,7 @@ ta:CreateDropdown({
     end,
 })
 
--- Detectar quando o player encosta nos triggers
+-- Função para configurar triggers
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
@@ -834,7 +834,6 @@ local function SetupTrigger(trigger)
                 ActiveTouches[trigger] = true
             end
         end)
-
         trigger.TouchEnded:Connect(function(hit)
             if hit.Parent == LocalPlayer.Character then
                 ActiveTouches[trigger] = nil
@@ -851,7 +850,7 @@ for _, name in ipairs(TriggerNames) do
     end
 end
 --
--- down everyoc
+-- hit sverin
 local plyers = game:GetService("Players")
 local HENTAI = false
 local JOT = 60
@@ -1679,6 +1678,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
