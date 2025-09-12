@@ -731,7 +731,7 @@ t4:CreateButton({
 })
 ta:CreateSection("Survivor - NEW")
 -- interact
---[[ta:CreateToggle({
+ta:CreateToggle({
     Name = "Auto Interact",
     CurrentValue = false,
     Flag = "ToggleInputAction",
@@ -751,7 +751,7 @@ ta:CreateSection("Survivor - NEW")
             end)
         end
     end,
-})]]
+})
 --
 -- Lista de triggers do jogo
 local TriggerNames = {
@@ -780,38 +780,6 @@ local function IsTriggerAllowed(triggerName)
     return false
 end
 
--- Toggle Auto Interact
-ta:CreateToggle({
-    Name = "Auto Interact",
-    CurrentValue = false,
-    Flag = "Toggle_AutoInteract",
-    Callback = function(Value)
-        _G.AutoInteractEnabled = Value
-        if Value then
-            task.spawn(function()
-                while _G.AutoInteractEnabled do
-                    local didInteract = false
-                    for trigger, _ in pairs(ActiveTouches) do
-                        if IsTriggerAllowed(trigger.Name) then
-                            local args = {
-                                "Input",        -- string literal
-                                "Action",       -- string literal
-                                true            -- boolean
-                            }
-                            game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
-                            didInteract = true
-                        end
-                    end
-                    if not didInteract then
-                        task.wait() -- espera seguro se não estiver em nenhum trigger
-                    end
-                end
-            end)
-        end
-    end,
-})
-
--- Dropdown para selecionar triggers
 ta:CreateDropdown({
     Name = "Choose a Trigger",
     Options = TriggerNames,
@@ -1678,6 +1646,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
