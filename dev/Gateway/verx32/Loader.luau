@@ -218,7 +218,7 @@ t6:CreateDropdown({
         end
    end,
 })
-ta:CreateLabel("TIP: Configurations not loading? Click Reset Data to reset your configurations.", 95107582760295, Color3.fromRGB(30, 35, 40), true) -- Title, Icon, Color, IgnoreThems
+t6:CreateLabel("TIP: Configurations not loading? Click Reset Data to reset your configurations.", 95107582760295, Color3.fromRGB(30, 35, 40), true) -- Title, Icon, Color, IgnoreThems
 t6:CreateButton({
    Name = "Reset Data",
    Callback = function()
@@ -231,12 +231,14 @@ t6:CreateButton({
                 Image = 132834248211414,
             })
         else
+            if not isfile("Dirsblox/FTF_Config.rfld") then
             Rayfield:Notify({
                 Title = "System Notification",
                 Content = "No data is avaible/configurations data is clear or nil.",
                 Duration = 1.5,
                 Image = 132834248211414,
             })
+            end
         end
    end,
 })
@@ -1677,6 +1679,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
