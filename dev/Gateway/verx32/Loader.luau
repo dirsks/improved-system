@@ -422,7 +422,18 @@ t3:CreateToggle({
     Flag = "TogglePodsESP",
     Callback = function(Value)
         _G.ESP_PODS = Value
-        onMapChanged()
+        if Value then
+            task.spawn(function()
+                while _G.ESP_PODS do
+                    if CurrentMap.Value then
+                        onMapChanged()
+                    end
+                    task.wait(1)
+                end
+            end)
+        else
+            removeESP("FreezePod")
+        end
     end,
 })
 
@@ -1646,6 +1657,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
