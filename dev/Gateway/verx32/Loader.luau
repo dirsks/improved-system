@@ -83,7 +83,7 @@ print("Loaded: " .. script.Name .. " succeful. 💎 Join Dodo Hub to support us!
 print("gateway ID: " .. game.PlaceVersion)
 
 local Window = Rayfield:CreateWindow({
-   Name = "Dodo Development "..eventEmoji.." ["..info.Name.."]",
+   Name = "Dodo Hub "..eventEmoji.." ["..info.Name.."]",
    Icon = 126271437555657,
    LoadingTitle = ">Loading...",
    LoadingSubtitle = GetRandomTip(),
@@ -1646,6 +1646,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
