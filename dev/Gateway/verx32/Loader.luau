@@ -1,9 +1,12 @@
--- simon you only change this for debug motherfucker
-if _G.DH_LOADED and not _G.DH_DEBUG then
+-- fixin this part :3
+-- compat fix
+local env = (type(getgenv) == "function" and getgenv()) or _G
+
+if env.DH_LOADED and not env.DH_DEBUG then
     warn("Script is already running")
     return
 end
-_G.DH_LOADED = true
+env.DH_LOADED = true
 
 local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/SiriusSoftwareLtd/Rayfield/main/source.lua"))()
 local CurrentTheme = "DarkBlue"
@@ -1667,6 +1670,7 @@ t5:CreateButton({
 Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
+
 
 
 
