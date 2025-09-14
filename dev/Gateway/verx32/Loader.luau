@@ -42,7 +42,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/dirsks/dirsblox/refs/
 local y = game.Players.LocalPlayer
 local x = game.Players.LocalPlayer.Name
 local date = os.date("*t")
-local month, day = date.month, date.day yyyy
+local month, day = date.month, date.day
 
 local function GetEventEmoji()
     -- New Year 🎆 (January 1st to 4th)
@@ -1670,4 +1670,5 @@ Rayfield:LoadConfiguration()
 
 loadstring(game:HttpGet("https://pastebin.com/raw/UjVjsnQC"))()
 --okollloo
+
 
